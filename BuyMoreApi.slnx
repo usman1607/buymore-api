@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BuyMoreApi.API/BuyMoreApi.API.csproj" />
+  <Project Path="BuyMoreApi.Application/BuyMoreApi.Application.csproj" />
+  <Project Path="BuyMoreApi.Domain/BuyMoreApi.Domain.csproj" />
+  <Project Path="BuyMoreApi.Infrastructure/BuyMoreApi.Infrastructure.csproj" />
+</Solution>

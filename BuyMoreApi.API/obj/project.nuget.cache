@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "kCTjrlnulhY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
