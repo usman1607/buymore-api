@@ -1,8 +1,16 @@
+using BuyMoreApi.Infrastructure.Extensions;
+using BuyMoreApi.Infrastructure.Middlewares;
+using BuyMoreApi.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddDatabase(configuration);
+builder.Services.AddDependencyInjection(configuration);
 
 var app = builder.Build();
 
@@ -10,28 +18,25 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    await DatabaseInitializer.SeedUserData(app.Services); // Seed user data during development
+
+    // Enable Swagger UI and point it to the JSON path
+    app.UseSwaggerUI(options => 
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
 }
 
 app.UseHttpsRedirection();
+app.UseExceptionHandling();
 
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
 
@@ -39,3 +44,205 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+
+
+
+//DbContext
+//Entity Type Configuration
+//Migrations
+
+//Exceptions and Global Exception Handling
+//Extension Methods
+//Middleware and Filters
+
+//Authentication and Authorization - JWT, Identity, Roles, Policies
+//Dependency Injection and Service Lifetimes`
+ //- Scope, Singleton, Transient
+
+//API Endpoints and Routing
+
+
+
+
+
+/*
+1. DbContext
+
+What it is:
+DbContext is the main class in Entity Framework Core that manages database operations. It acts as a bridge between your application and the database.
+
+Responsibilities:
+
+Connects to the database.
+Tracks changes made to entities.
+Executes queries.
+Saves data to the database.
+
+Example:
+
+public class AppDbContext : DbContext
+{
+    public DbSet<User> Users { get; set; }
+
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+    {
+    }
+}
+
+Simple analogy:
+Think of DbContext as a manager that handles all communication between your application and the database.
+
+2. Entity Type Configuration
+
+What it is:
+Entity Type Configuration is used to define how a C# entity maps to a database table without cluttering the entity class.
+
+Why use it?
+
+Keeps entity classes clean.
+Centralizes database configuration.
+Improves maintainability.
+
+Example:
+
+public class UserConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.ToTable("Users");
+        builder.HasKey(u => u.Id);
+        builder.Property(u => u.Name)
+               .HasMaxLength(100)
+               .IsRequired();
+    }
+}
+
+Simple analogy:
+If an entity is a blueprint of a house, Entity Type Configuration defines the building rules and specifications.
+
+3. Exceptions and Global Exception Handling
+
+Exception
+
+An exception is an error that occurs while a program is running.
+
+Example:
+
+int result = 10 / 0; // Throws DivideByZeroException
+
+Global Exception Handling
+
+Instead of handling errors everywhere with try-catch, a central mechanism catches and processes all unhandled exceptions.
+
+Benefits:
+
+Consistent error responses.
+Cleaner code.
+Centralized logging.
+
+Example:
+
+app.UseExceptionHandler("/error");
+
+Simple analogy:
+An exception is like a problem during a journey. Global exception handling is a central customer support desk that handles all reported issues.
+
+4. Extension Methods
+
+What they are:
+Extension methods allow you to add new functionality to existing classes without modifying their source code.
+
+Requirements:
+
+Must be in a static class.
+Must be a static method.
+First parameter uses the this keyword.
+
+Example:
+
+public static class StringExtensions
+{
+    public static bool IsEmail(this string value)
+    {
+        return value.Contains("@");
+    }
+}
+
+Usage:
+
+bool valid = "test@example.com".IsEmail();
+
+Simple analogy:
+It's like adding a new tool to a toolbox without changing the toolbox itself.
+
+5. Middleware and Filters
+Middleware
+
+What it is:
+Middleware is software that sits in the HTTP request pipeline and processes requests and responses.
+
+Responsibilities:
+
+Authentication
+Logging
+Error handling
+Routing
+
+Example:
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+Request Flow:
+
+Request → Middleware 1 → Middleware 2 → Controller
+Response ← Middleware 1 ← Middleware 2 ← Controller
+
+Simple analogy:
+Middleware is like security checkpoints at an airport. Every passenger (request) passes through them before reaching the gate (controller).
+
+Filters
+
+What they are:
+Filters run within the MVC/Web API pipeline and allow code to execute before or after controller actions.
+
+Common Types:
+
+Authorization Filters
+Action Filters
+Exception Filters
+Result Filters
+
+Example:
+
+public class LogActionFilter : ActionFilterAttribute
+{
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        Console.WriteLine("Action is executing");
+    }
+}
+
+Simple analogy:
+Filters are like assistants assigned specifically to controller actions, performing tasks before or after the action runs.
+
+Quick Comparison
+Concept	Purpose
+DbContext	Manages database access and entity tracking
+Entity Type Configuration	Defines how entities map to database tables
+Exceptions	Errors that occur during execution
+Global Exception Handling	Centralized handling of application errors
+Extension Methods	Add functionality to existing classes without modifying them
+Middleware	Processes HTTP requests and responses across the application
+Filters	Execute logic before or after controller actions
+Middleware vs Filters
+Middleware	Filters
+Runs for every HTTP request	Runs only for MVC/API actions
+Part of HTTP pipeline	Part of MVC pipeline
+Used for logging, auth, exception handling	Used for action-specific concerns
+Executes before controller selection	Executes around controller actions
+
+
+*/

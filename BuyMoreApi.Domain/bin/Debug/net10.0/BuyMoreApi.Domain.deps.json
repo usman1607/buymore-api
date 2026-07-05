@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "BuyMoreApi.Domain/1.0.0": {
+        "runtime": {
+          "BuyMoreApi.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BuyMoreApi.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

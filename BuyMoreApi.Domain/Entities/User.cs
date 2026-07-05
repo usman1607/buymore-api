@@ -13,6 +13,8 @@ namespace BuyMoreApi.Domain.Entities
         public Role Role { get; set; } = default!;
         public decimal WalletBalance { get; private set; }
         public List<Order> Orders { get; set; } = new List<Order>();
+        public Guid? CartId { get; set; }
+        public Cart? Cart { get; set; }
 
         public void UpdateWalletBalance(decimal amount)
         {
