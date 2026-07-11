@@ -128,11 +128,25 @@ app.Run();
 //Extension Methods
 //Middleware and Filters
 
+//Validation and FluentValidation
+
 //Authentication and Authorization - JWT, Identity, Roles, Policies
 //Dependency Injection and Service Lifetimes`
  //- Scope, Singleton, Transient
 
 //API Endpoints and Routing
+
+//Policies and Claims-Based Authorization
+//Logging and Monitoring
+//Mail Services and Notifications
+//Payment Integration and External Services
+//File Uploads and Storage
+
+
+//Unit Testing and Integration Testing
+//Docker and Containerization
+//CI/CD and Deployment
+
 
 
 

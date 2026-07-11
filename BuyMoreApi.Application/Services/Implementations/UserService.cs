@@ -15,6 +15,7 @@ namespace BuyMoreApi.Application.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
         private readonly IJwtService _jwtService;
+
         public UserService(IUserRepository userRepository, IJwtService jwtService, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
@@ -22,9 +23,82 @@ namespace BuyMoreApi.Application.Services.Implementations
             _jwtService = jwtService;
         }
 
+        public async Task<List<UserDto>> GetAllUsers(SearchUserRequest request)
+        {
+            var users = await _userRepository.SearchUsers(request);
+            
+            return users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Role = u.Role.ToString(),
+                PhoneNumber = u.PhoneNumber,
+                Address = u.Address
+            }).ToList();
+        }
+
+        public async Task<UserDto> GetProfile(Guid id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                throw new NotFoundException($"User with ID: {id} not found.");
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role.ToString(),
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address
+            };
+        }
+
+        public async Task<UserDto> GetUserByEmail(string email)
+        {
+            var user = await _userRepository.GetUserByEmail(email);
+            if (user == null)
+            {
+                throw new NotFoundException($"User with email: {email} not found.");
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role.ToString(),
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address
+            };
+        }
+
         public async Task<LoginResponse> Login(LoginRequest request)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Attempting to log in user with email: {Email}", request.Email);
+            var user = await _userRepository.GetUserByEmail(request.Email);
+            if (user == null || !Util.IsValidPassword(request.Password, user.EncryptedPassword))
+            {
+                _logger.LogWarning("Invalid login attempt for email: {Email}", request.Email);
+                throw new UnauthorizedException("Invalid email or password.");
+            }
+
+            var token = _jwtService.GenerateToken(user);
+
+            return new LoginResponse
+            {
+                Token = token,
+                Id = user.Id,
+                Email = user.Email,
+                FullName = $"{user.FirstName} {user.LastName}",
+                Role = user.Role.ToString(),
+            };
         }
 
         public async Task<LoginResponse> Register(RegisterRequest request)
@@ -61,6 +135,24 @@ namespace BuyMoreApi.Application.Services.Implementations
                 FullName = $"{newUser.FirstName} {newUser.LastName}",
                 Role = newUser.Role.ToString(),
             };
+        }
+
+        public async Task<bool> UpdateProfile(Guid id, UpdateUserRequest request)
+        {
+            _logger.LogInformation("Updating profile for user with ID: {UserId}", id);
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                _logger.LogWarning("User with ID {UserId} not found.", id);
+                throw new NotFoundException($"User with ID: {id} not found.");
+            }
+
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.PhoneNumber = request.PhoneNumber;
+            user.Address = request.Address;
+            
+            return await _userRepository.UpdateUser(id, user);
         }
     }
 }

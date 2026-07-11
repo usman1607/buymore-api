@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "/vmmHBRWLFc=",
+  "dgSpecHash": "Q68eFF+Sf6w=",
   "success": true,
   "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.Application\\BuyMoreApi.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.3.11\\microsoft.aspnetcore.http.abstractions.2.3.11.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.3.10\\microsoft.aspnetcore.http.features.2.3.10.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.bcl.cryptography\\10.0.2\\microsoft.bcl.cryptography.10.0.2.nupkg.sha512",

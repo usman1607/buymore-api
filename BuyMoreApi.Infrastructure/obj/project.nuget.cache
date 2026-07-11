@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "eKA5Q8fxz24=",
+  "dgSpecHash": "yQJ+CX7gyS4=",
   "success": true,
   "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.Infrastructure\\BuyMoreApi.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.3.11\\microsoft.aspnetcore.http.abstractions.2.3.11.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.3.10\\microsoft.aspnetcore.http.features.2.3.10.nupkg.sha512",

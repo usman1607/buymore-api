@@ -33,6 +33,5 @@ namespace BuyMoreApi.Infrastructure.Extensions
             return services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString));
         }        
-        
     }
 }
