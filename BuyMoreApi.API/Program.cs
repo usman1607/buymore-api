@@ -1,6 +1,12 @@
 using BuyMoreApi.Infrastructure.Extensions;
 using BuyMoreApi.Infrastructure.Middlewares;
 using BuyMoreApi.Infrastructure.Persistence;
+using BuyMoreApi.Application.Validations;
+using BuyMoreApi.API.Filters;
+using Microsoft.OpenApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -8,9 +14,76 @@ var configuration = builder.Configuration;
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // Applies validation to all controller endpoints seamlessly
+    options.Filters.Add<AutomaticValidationFilter>(); 
+});
 builder.Services.AddDatabase(configuration);
 builder.Services.AddDependencyInjection(configuration);
+builder.Services.AddApplicationValidation(); // Register FluentValidation validators
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        // Validate the issuer (who created the token)
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+
+        // Validate the audience (who the token is for)
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+
+        // Validate the signing key (that the token is trusted)
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)
+        ),
+
+        // Validate token expiration
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero // Removes the default 5-minute grace period
+    };
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Edumito API",
+        Version = "v1",
+        Description = "Edumito by Goldus Technologies — Multi-tenant AI-powered School Management Platform"
+    });
+ 
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter your JWT token"
+    });
+ 
+    /*c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme()
+            {
+                Reference = new OpenApiReference
+                    { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });*/
+});
+
+
 
 var app = builder.Build();
 
@@ -22,28 +95,27 @@ if (app.Environment.IsDevelopment())
     await DatabaseInitializer.SeedUserData(app.Services); // Seed user data during development
 
     // Enable Swagger UI and point it to the JSON path
-    app.UseSwaggerUI(options => 
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Buy Moore API v1");
+        options.RoutePrefix = "swagger";
     });
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseExceptionHandling();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
 app.MapControllers();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+
+
 
 
 

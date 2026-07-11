@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "2cS4L/SrzbQ=",
+  "dgSpecHash": "aAnbMR2p0Dw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.9\\microsoft.aspnetcore.authentication.jwtbearer.10.0.9.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
@@ -55,9 +56,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
       "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
       "targetGraphs": [
         "net10.0"
@@ -67,9 +68,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
       "libraryId": "Microsoft.Extensions.Logging.Abstractions",
       "targetGraphs": [
         "net10.0"

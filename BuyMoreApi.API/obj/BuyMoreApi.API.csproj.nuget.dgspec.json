@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj": {}
+    "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj": {
+    "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+        "projectUniqueName": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
         "projectName": "BuyMoreApi.API",
-        "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+        "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
         "packagesPath": "C:\\Users\\usman.tijani\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\obj\\",
+        "outputPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -586,6 +586,10 @@
           "targetAlias": "net10.0",
           "dependencies": {
             "FluentValidation": {
+              "target": "Package",
+              "version": "[12.1.1, )"
+            },
+            "FluentValidation.DependencyInjectionExtensions": {
               "target": "Package",
               "version": "[12.1.1, )"
             },
