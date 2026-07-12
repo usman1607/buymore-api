@@ -12,6 +12,7 @@ namespace BuyMoreApi.Application.Services.Interfaces
     {
         Task<LoginResponse> Login(LoginRequest request);
         Task<LoginResponse> Register(RegisterRequest request);
+        Task<UserDto> AddUser(NewUserRequest request);
         Task<UserDto> GetProfile(Guid id);
         Task<List<UserDto>> GetAllUsers(SearchUserRequest request);
         Task<UserDto> GetUserByEmail(string email);

@@ -15,12 +15,48 @@ namespace BuyMoreApi.Application.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
         private readonly IJwtService _jwtService;
+        private readonly ICurrentUser _currentUser;
 
-        public UserService(IUserRepository userRepository, IJwtService jwtService, ILogger<UserService> logger)
+        public UserService(IUserRepository userRepository, IJwtService jwtService, ILogger<UserService> logger, ICurrentUser currentUser)
         {
             _userRepository = userRepository;
             _logger = logger;
+            _currentUser = currentUser;
             _jwtService = jwtService;
+        }
+
+        public async Task<UserDto> AddUser(NewUserRequest request)
+        {
+            var loggedInUser = _currentUser.LoggedInUserEmail();
+            _logger.LogInformation("{Email} is attempting to add a new user: {NewUserEmail}.", loggedInUser, request.Email);
+
+            var alreadyExists = await _userRepository.EmailExists(request.Email);
+            if (alreadyExists)
+            {
+                _logger.LogWarning("User with email {Email} already exists.", request.Email);
+                throw new BadRequestException($"User with email: {request.Email} already exists.");
+            }
+
+            var newUser = new User
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                EncryptedPassword = Util.EncryptPassword(request.Password),
+                Role = request.Role,
+                CreatedBy = loggedInUser
+            };
+
+            await _userRepository.AddUser(newUser);
+
+            return new UserDto
+            {
+                Id = newUser.Id,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                Email = newUser.Email,
+                Role = newUser.Role.ToString()
+            };
         }
 
         public async Task<List<UserDto>> GetAllUsers(SearchUserRequest request)

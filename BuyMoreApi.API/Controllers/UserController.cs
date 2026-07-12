@@ -37,6 +37,14 @@ namespace BuyMoreApi.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("add-user")]
+        public async Task<IActionResult> AddUser([FromBody] NewUserRequest request)
+        {
+            var response = await _userService.AddUser(request);
+            return Ok(response);
+        }
+
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile([FromQuery] Guid id)
         {

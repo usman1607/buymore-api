@@ -23,6 +23,7 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddDatabase(configuration);
 builder.Services.AddDependencyInjection(configuration);
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddApplicationValidation(); // Register FluentValidation validators
 
 // JWT Authentication
@@ -79,11 +80,11 @@ builder.Services.AddSwaggerGen(c =>
         BearerFormat = "JWT",
         Description = "Enter your JWT token"
     });
- 
+
     c.AddSecurityRequirement(document =>
         new OpenApiSecurityRequirement
         {
-            [new OpenApiSecuritySchemeReference("Bearer")] = new List<string>()
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
         });
 });
 
