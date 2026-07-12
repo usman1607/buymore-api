@@ -7,6 +7,8 @@ using Microsoft.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using BuyMoreApi.Domain.Constants;
+using BuyMoreApi.Application.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -23,33 +25,41 @@ builder.Services.AddDatabase(configuration);
 builder.Services.AddDependencyInjection(configuration);
 builder.Services.AddApplicationValidation(); // Register FluentValidation validators
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+// JWT Authentication
+var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>()
+    ?? throw new InvalidOperationException("JwtSettings not configured.");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        // Validate the issuer (who created the token)
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        };
+    });
 
-        // Validate the audience (who the token is for)
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole(RoleNames.Admin));
+    options.AddPolicy("AdminAndCustomer", policy => policy.RequireRole(RoleNames.Customer, RoleNames.Admin));
+    options.AddPolicy("CustomerOnly", policy => policy.RequireRole(RoleNames.Customer));
+    options.AddPolicy("StaffOnly", policy => policy.RequireRole(RoleNames.Staff));
+});
 
-        // Validate the signing key (that the token is trusted)
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)
-        ),
-
-        // Validate token expiration
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero // Removes the default 5-minute grace period
-    };
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins("http://localhost:5013")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -57,9 +67,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Edumito API",
+        Title = "Buy More API",
         Version = "v1",
-        Description = "Edumito by Goldus Technologies — Multi-tenant AI-powered School Management Platform"
+        Description = "Buy More API - Multi-tenant AI-powered E-commerce Platform"
     });
  
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -70,20 +80,12 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Enter your JWT token"
     });
  
-    /*c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    c.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
         {
-            new OpenApiSecurityScheme()
-            {
-                Reference = new OpenApiReference
-                    { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            Array.Empty<string>()
-        }
-    });*/
+            [new OpenApiSecuritySchemeReference("Bearer")] = new List<string>()
+        });
 });
-
-
 
 var app = builder.Build();
 
@@ -103,12 +105,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseHttpsRedirection();
 app.UseExceptionHandling();
 
+app.UseCors("AllowFrontend");
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

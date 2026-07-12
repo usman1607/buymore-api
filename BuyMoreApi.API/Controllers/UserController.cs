@@ -38,10 +38,10 @@ namespace BuyMoreApi.API.Controllers
         }
 
         [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile()
+        public async Task<IActionResult> GetProfile([FromQuery] Guid id)
         {
-            //var response = await _userService.GetProfile();
-            return Ok("response");
+            var response = await _userService.GetProfile(id);
+            return Ok(response);
         }
     }
 }
