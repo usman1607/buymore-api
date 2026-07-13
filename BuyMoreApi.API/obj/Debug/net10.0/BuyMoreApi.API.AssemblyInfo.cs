@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BuyMoreApi.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+952282f7f741de2978ed551d1e0b9cc38def043a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4dbbbd88a0e8077b839ac610aac7deb82b0344a")]
 [assembly: System.Reflection.AssemblyProductAttribute("BuyMoreApi.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BuyMoreApi.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
