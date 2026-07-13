@@ -1,14 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "aAnbMR2p0Dw=",
+  "dgSpecHash": "sxq2cNXqHPA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\awssdk.core\\3.7.300.7\\awssdk.core.3.7.300.7.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\awssdk.s3\\3.7.302\\awssdk.s3.3.7.302.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\azure.core\\1.36.0\\azure.core.1.36.0.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\azure.storage.blobs\\12.19.1\\azure.storage.blobs.12.19.1.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\azure.storage.common\\12.18.1\\azure.storage.common.12.18.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.9\\microsoft.aspnetcore.authentication.jwtbearer.10.0.9.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.bcl.cryptography\\10.0.2\\microsoft.bcl.cryptography.10.0.2.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
@@ -49,17 +55,19 @@
     "C:\\Users\\usman.tijani\\.nuget\\packages\\system.composition.hosting\\9.0.0\\system.composition.hosting.9.0.0.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\system.composition.runtime\\9.0.0\\system.composition.runtime.9.0.0.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\system.composition.typedparts\\9.0.0\\system.composition.typedparts.9.0.0.nupkg.sha512",
-    "C:\\Users\\usman.tijani\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.19.1\\system.identitymodel.tokens.jwt.8.19.1.nupkg.sha512"
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.19.1\\system.identitymodel.tokens.jwt.8.19.1.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\system.io.hashing\\6.0.0\\system.io.hashing.6.0.0.nupkg.sha512",
+    "C:\\Users\\usman.tijani\\.nuget\\packages\\system.memory.data\\1.0.2\\system.memory.data.1.0.2.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1510",
       "level": "Warning",
-      "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+      "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
-      "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "libraryId": "Microsoft.Extensions.Logging.Abstractions",
       "targetGraphs": [
         "net10.0"
       ]
@@ -67,11 +75,23 @@
     {
       "code": "NU1510",
       "level": "Warning",
-      "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+      "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
-      "libraryId": "Microsoft.Extensions.Logging.Abstractions",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "BuyMoreApi.Infrastructure depends on AWSSDK.S3 (>= 3.7.301.2) but AWSSDK.S3 3.7.301.2 was not found. AWSSDK.S3 3.7.302 was resolved instead.",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "libraryId": "AWSSDK.S3",
       "targetGraphs": [
         "net10.0"
       ]

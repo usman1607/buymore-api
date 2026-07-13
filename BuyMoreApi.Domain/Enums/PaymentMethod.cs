@@ -5,6 +5,7 @@ namespace BuyMoreApi.Domain.Enums
         Card = 1,
         BankTransfer,
         Wallet,
-        CashOnDelivery
+        CashOnDelivery,
+        Paystack
     }
 }

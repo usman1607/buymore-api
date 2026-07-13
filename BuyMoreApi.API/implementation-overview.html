@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuyMore API – Feature Implementation Deep Dive</title>
+  <style>
+    :root {
+      --bg:#10121a;--surface:#1a1d2b;--surface2:#21253a;--border:#2f334d;--primary:#7c6af7;--accent:#5bc4f5;
+      --green:#4ec97e;--red:#f56565;--yellow:#f6c90e;--orange:#f5a623;--text:#e2e8f0;--muted:#8b94aa;--code-bg:#141622;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;} body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px;}
+    header{background:linear-gradient(135deg,#1a1d2b,#12142a);border-bottom:2px solid var(--primary);padding:48px 40px 32px;text-align:center;}
+    header h1{font-size:2.5rem;font-weight:800;background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;}
+    header p{color:var(--muted);font-size:1rem;max-width:760px;margin:0 auto;}
+    .wrapper{max-width:1100px;margin:0 auto;padding:40px 26px;}
+    nav.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px 30px;margin-bottom:48px;}
+    nav.toc h2{color:var(--accent);margin-bottom:18px;font-size:1.05rem;letter-spacing:.05em;text-transform:uppercase;}
+    nav.toc ol{padding-left:20px;} nav.toc li{margin-bottom:6px;} nav.toc a{color:var(--primary);text-decoration:none;} nav.toc a:hover{text-decoration:underline;}
+    section{margin-bottom:56px;} .part-header{background:linear-gradient(90deg,var(--primary) 0%,transparent 100%);border-radius:8px;padding:2px 0 2px 16px;margin-bottom:26px;}
+    .part-header h2{font-size:1.5rem;font-weight:700;padding:12px 20px;background:var(--surface);border-radius:6px;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:28px;overflow:hidden;}
+    .card-header{background:var(--surface2);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .badge{font-size:.7rem;font-weight:700;padding:4px 11px;border-radius:18px;letter-spacing:.06em;text-transform:uppercase;color:#fff;}
+    .badge-arch{background:#5bc4f5;} .badge-api{background:#7c6af7;} .badge-infra{background:#4ec97e;} .badge-config{background:#f5a623;} .badge-ops{background:#f56565;} .badge-webhook{background:#ec4899;}
+    .card-header h3{font-size:1.22rem;font-weight:700;color:var(--accent);} .card-body{padding:24px 28px;}
+    .preamble{background:var(--code-bg);border-left:4px solid var(--primary);border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:22px;font-size:.96rem;}
+    .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px;}
+    .pill{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:.85rem;} .pill span{color:var(--muted);display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;} .pill strong{color:var(--yellow);}
+    .section-title{font-size:.95rem;font-weight:700;color:var(--yellow);margin:24px 0 12px;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:6px;}
+    ul{margin-left:20px;} ul li{margin-bottom:6px;} ol{margin-left:20px;} ol li{margin-bottom:6px;}
+    .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:16px 0 22px;}
+    .code-top{background:var(--surface2);padding:8px 16px;font-size:.75rem;color:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    .code-top .lang{color:var(--accent);font-weight:600;} pre{padding:20px;overflow-x:auto;font-family:'Cascadia Code','Consolas',monospace;font-size:.86rem;line-height:1.7;}
+    .kw{color:#c792ea;} .cls{color:#82aaff;} .prop{color:#5bc4f5;} .str{color:#c3e88d;} .num{color:#f78c6c;} .cm{color:#5c6370;font-style:italic;} .cn{color:#f6c90e;}
+    .note{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:.9rem;} .note strong{display:block;margin-bottom:4px;}
+    .note-tip{background:rgba(78,201,126,.12);border-left:4px solid var(--green);} .note-warn{background:rgba(246,201,14,.12);border-left:4px solid var(--yellow);} .note-info{background:rgba(91,196,245,.12);border-left:4px solid var(--accent);} .note-error{background:rgba(245,101,101,.12);border-left:4px solid var(--red);}
+    .timeline{border-left:2px solid var(--border);padding-left:20px;margin:12px 0;}
+    .timeline-item{position:relative;margin-bottom:18px;padding-left:6px;}
+    .timeline-item::before{content:"";position:absolute;left:-22px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--primary);}
+    .timeline-item strong{color:var(--accent);}
+    footer{text-align:center;padding:24px;border-top:1px solid var(--border);color:var(--muted);font-size:.82rem;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BuyMore API &mdash; Feature Implementation Deep Dive</h1>
+    <p>A guided walkthrough of every subsystem added to support logging &amp; monitoring, notification pipelines, Paystack payments + webhooks, pluggable storage, and the supporting API surface.</p>
+  </header>
+
+  <div class="wrapper">
+    <nav class="toc">
+      <h2>How this doc is structured</h2>
+      <ol>
+        <li><a href="#architecture">Solution Architecture Snapshot</a></li>
+        <li><a href="#monitoring">Request Monitoring &amp; Logging</a></li>
+        <li><a href="#notifications">Mail &amp; Notification Services</a></li>
+        <li><a href="#payments">Paystack Payments &amp; REST Client</a></li>
+        <li><a href="#webhook">Paystack Webhook Flow</a></li>
+        <li><a href="#storage">Pluggable File Storage Providers</a></li>
+        <li><a href="#api-surface">API Surface &amp; Middleware</a></li>
+        <li><a href="#configuration">Configuration &amp; Secrets Management</a></li>
+        <li><a href="#testing">Running / Testing Notes</a></li>
+        <li><a href="#next">What to Extend Next</a></li>
+      </ol>
+    </nav>
+
+    <section id="architecture">
+      <div class="part-header"><h2>Architecture Snapshot</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-arch">Topology</span><h3>Where each concern lives</h3></div>
+        <div class="card-body">
+          <div class="preamble">
+            Clean architecture boundaries were preserved: thin DTOs and service contracts live in <code>BuyMoreApi.Application</code>, infrastructure houses the concrete adapters, and the API project simply wires dependencies and exposes controllers/middleware.
+          </div>
+          <div class="meta-grid">
+            <div class="pill"><span>Application contracts</span><strong>Monitoring, Notifications, Payments, Storage</strong></div>
+            <div class="pill"><span>Infrastructure adapters</span><strong>MetricsService, SmtpMailService, PaystackPaymentService/WebhookService, Storage Providers</strong></div>
+            <div class="pill"><span>API entry points</span><strong>MonitoringController, PaymentsController, RequestLoggingMiddleware</strong></div>
+          </div>
+          <div class="section-title">Implementation Timeline</div>
+          <div class="timeline">
+            <div class="timeline-item"><strong>Step 1.</strong> Added domain-agnostic DTOs/options and service interfaces for all new features.</div>
+            <div class="timeline-item"><strong>Step 2.</strong> Implemented infrastructure adapters (SMTP, Paystack, storage providers, in-memory metrics) and registered them with DI.</div>
+            <div class="timeline-item"><strong>Step 3.</strong> Surfaced middleware/controllers in the API project and extended Swagger &amp; CORS accordingly.</div>
+            <div class="timeline-item"><strong>Step 4.</strong> Introduced Paystack webhook handling with signature validation and integration hooks.</div>
+            <div class="timeline-item"><strong>Step 5.</strong> Updated configuration files to provide sane defaults for every subsystem.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="monitoring">
+      <div class="part-header"><h2>Request Monitoring &amp; Logging</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-ops">Tracing</span><h3>Capturing request telemetry without breaking clean architecture</h3></div>
+        <div class="card-body">
+          <div class="section-title">Application Layer</div>
+          <ul>
+            <li><code>MonitoringOptions</code> stores feature toggles (enable/disable, request body capture, ring-buffer size).</li>
+            <li><code>RequestMetric</code> is a minimal telemetry record (route, status code, duration, timestamp).</li>
+            <li><code>IMetricsService</code> abstracts metric collection so any host (web, background job, gRPC) can reuse it.</li>
+          </ul>
+          <div class="section-title">Infrastructure Layer</div>
+          <ul>
+            <li><code>MetricsService</code> keeps a concurrent queue bounded by configuration, enabling cheap in-memory dashboards.</li>
+            <li>Registration happens in <code>ServiceCollectionExtension.AddDependencyInjection</code>, exposing the service as a singleton.</li>
+          </ul>
+          <div class="section-title">API Layer</div>
+          <ul>
+            <li><code>RequestLoggingMiddleware</code> wraps every HTTP request, optionally buffers payloads, and pushes metrics before logging structured messages.</li>
+            <li><code>MonitoringController</code> exposes <code>GET /api/monitoring/metrics</code> so the team can inspect the buffered telemetry while developing.</li>
+          </ul>
+          <div class="code-block">
+            <div class="code-top"><span class="lang">C#</span><span>Request logging middleware snapshot</span></div>
+<pre><span class="kw">public sealed class</span> <span class="cls">RequestLoggingMiddleware</span>
+{
+    <span class="kw">public async Task</span> <span class="mth">InvokeAsync</span>(HttpContext context)
+    {
+        <span class="kw">var</span> sw = Stopwatch.StartNew();
+        <span class="kw">string?</span> body = null;
+        <span class="kw">if</span> (_options.CaptureRequestBody && context.Request.Body.CanSeek)
+        {
+            context.Request.EnableBuffering();
+            <span class="kw">using var</span> reader = <span class="kw">new</span> <span class="cls">StreamReader</span>(context.Request.Body, Encoding.UTF8, leaveOpen: <span class="kw">true</span>);
+            body = <span class="kw">await</span> reader.ReadToEndAsync();
+            context.Request.Body.Position = 0;
+        }
+
+        <span class="kw">await</span> _next(context);
+        sw.Stop();
+
+        _metrics.TrackRequest($"{context.Request.Method} {context.Request.Path}", sw.Elapsed.TotalMilliseconds, context.Response.StatusCode);
+        _logger.LogInformation(<span class="str">"Request {Route} -> {Status} in {Elapsed} ms {Payload}"</span>, ...);
+    }
+}
+</pre>
+          </div>
+          <div class="note note-tip"><strong>Why this design?</strong>The middleware depends only on <code>IMetricsService</code>, keeping ASP.NET Core aware code inside the API project while still allowing reuse in other hosts.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="notifications">
+      <div class="part-header"><h2>Mail &amp; Notification Services</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-infra">Messaging</span><h3>SMTP + notification fan-out</h3></div>
+        <div class="card-body">
+          <div class="section-title">Contracts &amp; Options</div>
+          <ul>
+            <li><code>MailRequest</code> encapsulates a transactional email (subject, HTML flag, reply-to, attachments).</li>
+            <li><code>MailOptions</code> stores SMTP host/port/credentials and default sender identity.</li>
+            <li><code>NotificationOptions</code> toggles delivery channels (email, logging) so environments can opt out.</li>
+            <li><code>IMailService</code> &amp; <code>INotificationService</code> keep controllers/services decoupled from a specific provider.</li>
+          </ul>
+          <div class="section-title">Infrastructure Binding</div>
+          <ul>
+            <li><code>SmtpMailService</code> uses <code>SmtpClient</code> under the hood. Attachments are streamed via <code>MemoryStream</code> to avoid locking the original payload array.</li>
+            <li><code>NotificationService</code> composes <code>IMailService</code> with logging so other transports (SMS, push) can be added without touching consumers.</li>
+          </ul>
+          <div class="note note-warn"><strong>Credential hygiene</strong>All secrets remain in configuration; the SMTP client never hard-codes passwords and supports SSL/TLS through <code>EnableSsl</code>.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="payments">
+      <div class="part-header"><h2>Paystack Payments</h2></div>
+      <div class="card">
+        <div the="card-header"><span class="badge badge-api">Payments</span><h3>REST integration for transaction init &amp; verification</h3></div>
+        <div class="card-body">
+          <div class="section-title">Application Contracts</div>
+          <ul>
+            <li><code>PaystackOptions</code> (base URL + secret/public keys).</li>
+            <li><code>PaystackInitializeRequest</code> / <code>PaystackInitializeResponse</code> mirror Paystack’s REST payloads.</li>
+            <li><code>PaystackVerifyResponse</code> captures the minimal verification data needed by the app.</li>
+            <li><code>IPaymentService</code> orchestrates interactions without leaking Paystack-specific details to the domain.</li>
+          </ul>
+          <div class="section-title">Infrastructure Client</div>
+          <ul>
+            <li><code>PaystackPaymentService</code> is registered via <code>AddHttpClient</code>, ensuring resilient HTTP usage (pooled handlers, lifetime mgmt).</li>
+            <li>Requests serialize using <code>System.Text.Json</code> and include the secret key in the <code>Authorization</code> header.</li>
+            <li>Responses wrap Paystack’s usual envelope (<code>status</code>/<code>message</code>/<code>data</code>).</li>
+          </ul>
+          <div class="code-block">
+            <div class="code-top"><span class="lang">C#</span><span>Initializing a transaction</span></div>
+<pre><span class="kw">public async Task</span>&lt;PaystackInitializeResponse&gt; <span class="mth">InitializeTransactionAsync</span>(PaystackInitializeRequest request, CancellationToken ct)
+{
+    <span class="kw">var</span> json = JsonSerializer.Serialize(request, _serializerOptions);
+    <span class="kw">using var</span> content = <span class="kw">new</span> <span class="cls">StringContent</span>(json, Encoding.UTF8, <span class="str">"application/json"</span>);
+
+    <span class="kw">using var</span> response = <span class="kw">await</span> _httpClient.PostAsync(<span class="str">"/transaction/initialize"</span>, content, ct);
+    <span class="kw">await</span> EnsureSuccessAsync(response);
+    <span class="kw">return</span> (<span class="kw">await</span> DeserializeAsync&lt;Envelope&lt;PaystackInitializeResponse&gt;&gt;(response, ct)).Data;
+}
+</pre>
+          </div>
+          <div class="note note-info"><strong>Why HttpClient factory?</strong>It avoids socket exhaustion under load and lets us plug Polly policies later without touching the service implementation.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="webhook">
+      <div class="part-header"><h2>Paystack Webhook Flow</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-webhook">Webhooks</span><h3>Signature validation &amp; notification hook</h3></div>
+        <div class="card-body">
+          <div class="section-title">End-to-End Path</div>
+          <ol>
+            <li><code>POST /api/payments/paystack/webhook</code> accepts webhook calls (anonymous allowed).</li>
+            <li>The controller buffers the raw request body for signature verification.</li>
+            <li><code>IPaystackWebhookService</code> verifies the <code>x-paystack-signature</code> header using HMAC-SHA512 and the configured secret key.</li>
+            <li>After validation, the payload is logged and routed through <code>INotificationService</code> so operators get visibility (currently via email/log; richer integrations can plug in later).</li>
+          </ol>
+          <div class="code-block">
+            <div class="code-top"><span class="lang">C#</span><span>Webhook verification snippet</span></div>
+<pre><span class="kw">private bool</span> <span class="mth">IsSignatureValid</span>(<span class="kw">string</span> signature, <span class="kw">string</span> rawBody)
+{
+    <span class="kw">using var</span> hmac = <span class="kw">new</span> <span class="cls">HMACSHA512</span>(Encoding.UTF8.GetBytes(_options.SecretKey));
+    <span class="kw">var</span> expected = BitConverter.ToString(hmac.ComputeHash(Encoding.UTF8.GetBytes(rawBody)))
+                      .Replace(<span class="str">"-"</span>, <span class="str">""</span>).ToLowerInvariant();
+    <span class="kw">return</span> string.Equals(expected, signature, StringComparison.OrdinalIgnoreCase);
+}
+</pre>
+          </div>
+          <div class="note note-error"><strong>Failure modes</strong>If the signature is missing/invalid or JSON parsing fails, the service throws <code>InvalidOperationException</code>. The controller should translate that into <code>400</code> responses; add custom exception handling if you prefer structured error payloads.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="storage">
+      <div class="part-header"><h2>Pluggable File Storage</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-infra">Storage</span><h3>Local disk, AWS S3, Azure Blob &mdash; pick at runtime</h3></div>
+        <div class="card-body">
+          <div class="section-title">Interfaces &amp; Options</div>
+          <ul>
+            <li><code>IFileStorage</code> defines three basic operations: <code>SaveAsync</code>, <code>GetAsync</code>, <code>DeleteAsync</code>.</li>
+            <li><code>FileStorageOptions</code> carries the selected provider and provider-specific options (local path, AWS credentials, Azure connection string).</li>
+          </ul>
+          <div class="section-title">Provider Implementations</div>
+          <ul>
+            <li><strong>LocalFileStorage</strong> writes to the server’s filesystem, auto-renaming files when overwriting is disabled.</li>
+            <li><strong>AwsS3FileStorage</strong> streams to S3 using the AWS SDK, handling <code>NotFound</code> gracefully.</li>
+            <li><strong>AzureBlobFileStorage</strong> talks to Azure Blob Storage, creating the container on startup if missing.</li>
+          </ul>
+          <div class="section-title">Factory Pattern</div>
+          <p><code>FileStorageFactory</code> inspects <code>FileStorageOptions.Provider</code> and resolves the right implementation from the DI container. The API only depends on <code>IFileStorage</code>, keeping storage decisions in configuration.</p>
+          <div class="note note-tip"><strong>Swapping providers</strong>Flip <code>FileStorage:Provider</code> in <code>appsettings</code> (values: <code>Local</code>, <code>AwsS3</code>, <code>AzureBlob</code>) and restart; no code changes required.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api-surface">
+      <div class="part-header"><h2>API Surface &amp; Middleware</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-api">Controllers</span><h3>Endpoints added or modified</h3></div>
+        <div class="card-body">
+          <div class="section-title">New Controllers</div>
+          <ul>
+            <li><code>MonitoringController</code> exposes the metrics buffer.</li>
+            <li><code>FilesController</code> offers upload/download/delete endpoints secured by <code>[Authorize]</code>.</li>
+            <li><code>PaymentsController</code> now supports initialization, verification, and webhook handling in one place.</li>
+          </ul>
+          <div class="section-title">Program.cs Adjustments</div>
+          <ul>
+            <li>Added console/debug logging providers and <code>HealthChecks</code>.</li>
+            <li>Registered the middleware pipeline (<code>UseMiddleware&lt;RequestLoggingMiddleware&gt;</code>, <code>UseExceptionHandling</code>).</li>
+            <li>Updated Swagger security requirement to use the official <code>OpenApiSecurityScheme</code>/<code>OpenApiReference</code> API.</li>
+          </ul>
+          <div class="note note-info"><strong>Swagger repair</strong>The previous security requirement used a helper type that doesn’t exist in the new Swashbuckle version, causing a 500 when loading <code>/swagger/v1/swagger.json</code>. The fix uses <code>OpenApiSecurityScheme</code> and <code>OpenApiReference</code>, restoring compatibility.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="configuration">
+      <div class="part-header"><h2>Configuration &amp; Secrets</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-config">Config</span><h3>New sections in appsettings.json</h3></div>
+        <div class="card-body">
+          <ol>
+            <li><strong>Monitoring:</strong> toggle capture, request body sampling, and in-memory buffer size.</li>
+            <li><strong>Mail / Notification:</strong> SMTP host, port, credentials, and whether email/log channels are enabled.</li>
+            <li><strong>Paystack:</strong> secret/public keys and base API URL.</li>
+            <li><strong>FileStorage:</strong> provider selection plus provider-specific options.</li>
+          </ol>
+          <div class="note note-warn"><strong>Remember</strong>Replace placeholder secrets before deploying. Consider <code>dotnet user-secrets</code> for local development or Azure Key Vault in production.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="testing">
+      <div class="part-header"><h2>Running &amp; Testing</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-ops">Ops</span><h3>Build status &amp; troubleshooting</h3></div>
+        <div class="card-body">
+          <div class="note note-error"><strong>NuGet restore</strong>The current environment blocks outbound calls to <code>https://api.nuget.org/v3/index.json</code>, so <code>dotnet restore</code> fails with <code>NU1301</code>. Once internet access is restored, run <code>dotnet restore</code> followed by <code>dotnet build</code> to confirm everything compiles.</div>
+          <ul>
+            <li>Paystack and SMTP credentials are dummy values; swap them before calling real services.</li>
+            <li>S3/Azure providers require their respective NuGet packages (already referenced) and valid credentials.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="next">
+      <div class="part-header"><h2>Where to go next</h2></div>
+      <div class="card">
+        <div class="card-header"><span class="badge badge-arch">Roadmap</span><h3>Suggested follow-up work</h3></div>
+        <div class="card-body">
+          <ul>
+            <li>Add domain-specific processing inside <code>PaystackWebhookService</code> (e.g., mark orders as paid, persist transactions).</li>
+            <li>Introduce Polly retry policies for Paystack HTTP calls.</li>
+            <li>Write integration tests for the upload/download endpoints using the <code>IFileStorage</code> abstraction.</li>
+            <li>Surface metrics via Prometheus or Application Insights instead of the in-memory snapshot when moving to production.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Built for the BuyMore API refactor &mdash; keep configs secret, signatures verified, and logs structured.
+  </footer>
+</body>
+</html>

@@ -15,6 +15,7 @@ namespace BuyMoreApi.Infrastructure.Persistence
         public DbSet<User> Users => Set<User>();
         public DbSet<Cart> Carts => Set<Cart>();
         public DbSet<Item> Items => Set<Item>();
+        public DbSet<Order> Orders => Set<Order>();
         public DbSet<Payment> Payments => Set<Payment>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

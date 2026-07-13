@@ -21,6 +21,60 @@
           "BuyMoreApi.API.dll": {}
         }
       },
+      "AWSSDK.Core/3.7.300.7": {
+        "runtime": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.300.7"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.302": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.300.7"
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.302.0"
+          }
+        }
+      },
+      "Azure.Core/1.36.0": {
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
+          "System.Memory.Data": "1.0.2"
+        },
+        "runtime": {
+          "lib/net6.0/Azure.Core.dll": {
+            "assemblyVersion": "1.36.0.0",
+            "fileVersion": "1.3600.23.56006"
+          }
+        }
+      },
+      "Azure.Storage.Blobs/12.19.1": {
+        "dependencies": {
+          "Azure.Storage.Common": "12.18.1"
+        },
+        "runtime": {
+          "lib/net6.0/Azure.Storage.Blobs.dll": {
+            "assemblyVersion": "12.19.1.0",
+            "fileVersion": "12.1900.123.56305"
+          }
+        }
+      },
+      "Azure.Storage.Common/12.18.1": {
+        "dependencies": {
+          "Azure.Core": "1.36.0",
+          "System.IO.Hashing": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/Azure.Storage.Common.dll": {
+            "assemblyVersion": "12.18.1.0",
+            "fileVersion": "12.1800.123.56305"
+          }
+        }
+      },
       "FluentValidation/12.1.1": {
         "runtime": {
           "lib/net8.0/FluentValidation.dll": {
@@ -67,6 +121,14 @@
           "lib/net10.0/Microsoft.AspNetCore.OpenApi.dll": {
             "assemblyVersion": "10.0.8.0",
             "fileVersion": "10.0.826.23019"
+          }
+        }
+      },
+      "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "4.700.20.21406"
           }
         }
       },
@@ -653,6 +715,22 @@
           }
         }
       },
+      "System.IO.Hashing/6.0.0": {
+        "runtime": {
+          "lib/net6.0/System.IO.Hashing.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
+          }
+        }
+      },
+      "System.Memory.Data/1.0.2": {
+        "runtime": {
+          "lib/netstandard2.0/System.Memory.Data.dll": {
+            "assemblyVersion": "1.0.2.0",
+            "fileVersion": "1.0.221.20802"
+          }
+        }
+      },
       "BuyMoreApi.Application/1.0.0": {
         "dependencies": {
           "BuyMoreApi.Domain": "1.0.0",
@@ -678,6 +756,8 @@
       },
       "BuyMoreApi.Infrastructure/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "3.7.302",
+          "Azure.Storage.Blobs": "12.19.1",
           "BuyMoreApi.Application": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.9",
           "Microsoft.EntityFrameworkCore.Relational": "10.0.9",
@@ -697,6 +777,41 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "AWSSDK.Core/3.7.300.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hQWWQ90fKTMCspSUYfR3Yu0g02x8iTvTOKtVPDOFmeUSZ5DRJB/DQ2a/CeKzbOnX/FHly7X2DFFEtjNIWvWPfg==",
+      "path": "awssdk.core/3.7.300.7",
+      "hashPath": "awssdk.core.3.7.300.7.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.302": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JeQuG/ddmgklL5cJm+Vj5kmiBdlrAjRhKUL36EP5jog0xPqtaz/Vi8am3SQW1ld1+6nI8KcymO4+MGnc4eAEug==",
+      "path": "awssdk.s3/3.7.302",
+      "hashPath": "awssdk.s3.3.7.302.nupkg.sha512"
+    },
+    "Azure.Core/1.36.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vwqFZdHS4dzPlI7FFRkPx9ctA+aGGeRev3gnzG8lntWvKMmBhAmulABi1O9CEvS3/jzYt7yA+0pqVdxkpAd7dQ==",
+      "path": "azure.core/1.36.0",
+      "hashPath": "azure.core.1.36.0.nupkg.sha512"
+    },
+    "Azure.Storage.Blobs/12.19.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-x43hWFJ4sPQ23TD4piCwT+KlQpZT8pNDAzqj6yUCqh+WJ2qcQa17e1gh6ZOeT2QNFQTTDSuR56fm2bIV7i11/w==",
+      "path": "azure.storage.blobs/12.19.1",
+      "hashPath": "azure.storage.blobs.12.19.1.nupkg.sha512"
+    },
+    "Azure.Storage.Common/12.18.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ohCslqP9yDKIn+DVjBEOBuieB1QwsUCz+BwHYNaJ3lcIsTSiI4Evnq81HcKe8CqM8qvdModbipVQKpnxpbdWqA==",
+      "path": "azure.storage.common/12.18.1",
+      "hashPath": "azure.storage.common.12.18.1.nupkg.sha512"
     },
     "FluentValidation/12.1.1": {
       "type": "package",
@@ -732,6 +847,13 @@
       "sha512": "sha512-cw24xHE2QaWwyEG9GQwFbjboyabub6Vd80DIItUGENzcQOa/BEnTrXsg2GADqWTmY/3ycqk9ToLGjgvF/VRlGA==",
       "path": "microsoft.aspnetcore.openapi/10.0.8",
       "hashPath": "microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512"
+    },
+    "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yuvf07qFWFqtK3P/MRkEKLhn5r2UbSpVueRziSqj0yJQIKFwG1pq9mOayK3zE5qZCTs0CbrwL9M6R8VwqyGy2w==",
+      "path": "microsoft.bcl.asyncinterfaces/1.1.1",
+      "hashPath": "microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512"
     },
     "Microsoft.Bcl.Cryptography/10.0.2": {
       "type": "package",
@@ -984,6 +1106,20 @@
       "sha512": "sha512-2VHcRtT95GAcW1E3aVBLvL2rAAMxKHXKMXKXFyWzwgkdFXZPMMvP8tVOfnRydL4vTr1RirNuGC6T8VSEF2YsPQ==",
       "path": "system.identitymodel.tokens.jwt/8.19.1",
       "hashPath": "system.identitymodel.tokens.jwt.8.19.1.nupkg.sha512"
+    },
+    "System.IO.Hashing/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Rfm2jYCaUeGysFEZjDe7j1R4x6Z6BzumS/vUT5a1AA/AWJuGX71PoGB0RmpyX3VmrGqVnAwtfMn39OHR8Y/5+g==",
+      "path": "system.io.hashing/6.0.0",
+      "hashPath": "system.io.hashing.6.0.0.nupkg.sha512"
+    },
+    "System.Memory.Data/1.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JGkzeqgBsiZwKJZ1IxPNsDFZDhUvuEdX8L8BDC8N3KOj+6zMcNU28CNN59TpZE/VJYy9cP+5M+sbxtWJx3/xtw==",
+      "path": "system.memory.data/1.0.2",
+      "hashPath": "system.memory.data.1.0.2.nupkg.sha512"
     },
     "BuyMoreApi.Application/1.0.0": {
       "type": "project",

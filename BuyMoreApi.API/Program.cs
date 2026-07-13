@@ -3,6 +3,7 @@ using BuyMoreApi.Infrastructure.Middlewares;
 using BuyMoreApi.Infrastructure.Persistence;
 using BuyMoreApi.Application.Validations;
 using BuyMoreApi.API.Filters;
+using BuyMoreApi.API.Middlewares;
 using Microsoft.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -19,12 +20,19 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers(options =>
 {
     // Applies validation to all controller endpoints seamlessly
-    options.Filters.Add<AutomaticValidationFilter>(); 
+    options.Filters.Add<AutomaticValidationFilter>();
 });
 builder.Services.AddDatabase(configuration);
 builder.Services.AddDependencyInjection(configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddApplicationValidation(); // Register FluentValidation validators
+builder.Services.AddHealthChecks();
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+});
 
 // JWT Authentication
 var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>()
@@ -78,7 +86,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        Description = "Enter your JWT token"
+        Description = "Include the word 'Bearer' followed by a space and your JWT token."
     });
 
     c.AddSecurityRequirement(document =>
@@ -107,6 +115,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseExceptionHandling();
 
 app.UseCors("AllowFrontend");
@@ -114,6 +123,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
 
@@ -149,9 +159,7 @@ app.Run();
 //Unit Testing and Integration Testing
 //Docker and Containerization
 //CI/CD and Deployment
-
-
-
+ 
 
 
 

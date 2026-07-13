@@ -8,13 +8,13 @@ namespace BuyMoreApi.Domain.Entities
 {
     public class Order: BaseEntity
     {
-        public string Reference { get; } = default!;
-        public Guid UserId { get; }
-        public User User { get; } = default!;
-        public Guid PaymentId { get; }
-        public Payment Payment { get; } = default!;
-        public List<Item> Items { get; } = new List<Item>();
-        public decimal TotalAmount { get; }
+        public string Reference { get; set; } = default!;
+        public Guid UserId { get; set; }
+        public User User { get; set; } = default!;
+        public Guid PaymentId { get; set; }
+        public Payment Payment { get; set; } = default!;
+        public List<Item> Items { get; set; } = new List<Item>();
+        public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; set; }
     }
 }
