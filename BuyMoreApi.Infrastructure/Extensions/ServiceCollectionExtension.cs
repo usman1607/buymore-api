@@ -43,7 +43,7 @@ namespace BuyMoreApi.Infrastructure.Extensions
             services.AddSingleton<IMetricsService, MetricsService>();
             services.AddScoped<IMailService, SmtpMailService>();
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddHttpClient<IPaymentService, PaystackPaymentService>();
+            services.AddScoped<IPaymentService, PaystackPaymentService>();
             services.AddScoped<IPaystackWebhookService, PaystackWebhookService>();
 
             services.AddScoped<LocalFileStorage>();
