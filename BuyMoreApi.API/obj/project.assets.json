@@ -3565,11 +3565,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "projectUniqueName": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
       "projectName": "BuyMoreApi.API",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
       "packagesPath": "C:\\Users\\usman.tijani\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\obj\\",
+      "outputPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -4095,8 +4095,8 @@
       "code": "NU1510",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "libraryId": "Microsoft.Extensions.Logging.Abstractions",
+      "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
       "targetGraphs": [
         "net10.0"
       ]
@@ -4105,8 +4105,8 @@
       "code": "NU1510",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
+      "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "libraryId": "Microsoft.Extensions.Logging.Abstractions",
       "targetGraphs": [
         "net10.0"
       ]
