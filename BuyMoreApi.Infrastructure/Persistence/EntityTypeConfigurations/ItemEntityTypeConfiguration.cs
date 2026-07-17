@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BuyMoreApi.Domain.Entities;
+using BuyMoreApi.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -49,6 +50,10 @@ namespace BuyMoreApi.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasColumnName("category")
                 .HasColumnType("varchar(50)")
                 .IsRequired();
+
+            builder.Property(i => i.ImageUrls)
+                .HasColumnName("image_urls")
+                .HasJsonbConversion();
 
             builder.Property(i => i.CreatedDate)
                 .HasColumnName("created_date")

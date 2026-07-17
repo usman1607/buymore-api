@@ -51,19 +51,9 @@ namespace BuyMoreApi.Infrastructure.Persistence.Repositories
             return user;
         }
 
-        public async Task<bool> UpdateUser(Guid id, User user)
+        public async Task<bool> UpdateUser(User user)
         {
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
-            if (existingUser == null)
-            {
-                return false;
-            }
-
-            existingUser.FirstName = user.FirstName;
-            existingUser.LastName = user.LastName;
-            existingUser.PhoneNumber = user.PhoneNumber;
-            existingUser.Address = user.Address;
-
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return true;
         }

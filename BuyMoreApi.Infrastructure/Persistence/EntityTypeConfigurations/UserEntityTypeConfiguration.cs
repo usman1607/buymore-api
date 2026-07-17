@@ -40,6 +40,10 @@ namespace BuyMoreApi.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasColumnType("varchar(100)")
                 .IsRequired();
 
+            builder.Property(u => u.ProfilePictureUrl)
+                .HasColumnName("profile_picture_url")
+                .HasColumnType("varchar(255)");
+
             builder.Property(u => u.EncryptedPassword)
                 .HasColumnName("encrypted_password")
                 .HasColumnType("varchar(255)")

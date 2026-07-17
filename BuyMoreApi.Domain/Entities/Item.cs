@@ -13,5 +13,6 @@ namespace BuyMoreApi.Domain.Entities
         public decimal SellingPrice { get; set; }
         public int Quantity { get; set; }
         public string Category { get; set; } = "General";
+        public List<string> ImageUrls { get; set; } = new();
     }
 }

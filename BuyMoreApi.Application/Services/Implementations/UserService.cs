@@ -4,21 +4,25 @@ using BuyMoreApi.Application.Dtos.ResponseDtos;
 using BuyMoreApi.Application.Exceptions;
 using BuyMoreApi.Application.Repositories;
 using BuyMoreApi.Application.Services.Interfaces;
+using BuyMoreApi.Application.Storage;
 using BuyMoreApi.Application.Utilities;
 using BuyMoreApi.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace BuyMoreApi.Application.Services.Implementations
 {
     public class UserService: IUserService
     {
+        private readonly IFileStorage _fileStorage;
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
         private readonly IJwtService _jwtService;
         private readonly ICurrentUser _currentUser;
 
-        public UserService(IUserRepository userRepository, IJwtService jwtService, ILogger<UserService> logger, ICurrentUser currentUser)
+        public UserService(IUserRepository userRepository, IJwtService jwtService, IFileStorage fileStorage, ILogger<UserService> logger, ICurrentUser currentUser)
         {
+            _fileStorage = fileStorage;
             _userRepository = userRepository;
             _logger = logger;
             _currentUser = currentUser;
@@ -188,7 +192,37 @@ namespace BuyMoreApi.Application.Services.Implementations
             user.PhoneNumber = request.PhoneNumber;
             user.Address = request.Address;
             
-            return await _userRepository.UpdateUser(id, user);
+            return await _userRepository.UpdateUser(user);
+        }
+
+        public async Task<string> UploadProfilePicture(IFormFile file, CancellationToken cancellationToken)
+        {
+            if (file.Length == 0)
+            {
+                throw new BadRequestException("File is empty.");
+            }
+            
+            var email = _currentUser.LoggedInUserEmail();
+            var user = await _userRepository.GetUserByEmail(email);
+            if(user == null)
+            {
+                _logger.LogWarning("User not found.");
+                throw new NotFoundException("User not found.");
+            }            
+
+            await using var stream = file.OpenReadStream();
+
+            var path = await _fileStorage.SaveAsync(new FileUploadRequest
+            {
+                Content = stream,
+                FileName = file.FileName,
+                ContentType = file.ContentType
+            }, cancellationToken);
+
+            user.ProfilePictureUrl = path;
+            await _userRepository.UpdateUser(user);
+
+            return path;
         }
     }
 }

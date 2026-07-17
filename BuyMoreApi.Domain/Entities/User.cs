@@ -4,6 +4,7 @@ namespace BuyMoreApi.Domain.Entities
 {
     public class User: BaseEntity
     {
+        public string? ProfilePictureUrl { get; set; }
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
         public string? PhoneNumber { get; set; }

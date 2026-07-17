@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BuyMoreApi.Application.Dtos.RequestDtos;
 using BuyMoreApi.Application.Dtos.ResponseDtos;
 using BuyMoreApi.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace BuyMoreApi.Application.Services.Interfaces
 {
@@ -17,5 +18,6 @@ namespace BuyMoreApi.Application.Services.Interfaces
         Task<List<UserDto>> GetAllUsers(SearchUserRequest request);
         Task<UserDto> GetUserByEmail(string email);
         Task<bool> UpdateProfile(Guid id, UpdateUserRequest request);
+        Task<string> UploadProfilePicture(IFormFile file, CancellationToken cancellationToken);
     }
 }
