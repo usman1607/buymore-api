@@ -9,6 +9,7 @@ namespace BuyMoreApi.Application.Storage
     {
         public required Stream Content { get; init; }
         public required string FileName { get; init; }
+        public string? Folder { get; set;}
         public string ContentType { get; init; } = "application/octet-stream";
     }
 }

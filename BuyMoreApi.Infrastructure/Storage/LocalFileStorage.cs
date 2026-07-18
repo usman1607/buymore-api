@@ -26,13 +26,16 @@ namespace BuyMoreApi.Infrastructure.Storage
 
         public async Task<string> SaveAsync(FileUploadRequest request, CancellationToken cancellationToken = default)
         {
-            var filePath = Path.Combine(_options.RootPath, request.FileName);
+            var folder = request.Folder == null ? "uploads" : request.Folder;
+            var filePath = Path.GetFullPath(Path.Combine(_options.RootPath, folder, request.FileName));
 
             if (!_options.OverwriteExisting && File.Exists(filePath))
             {
-                filePath = Path.Combine(_options.RootPath, $"{Path.GetFileNameWithoutExtension(request.FileName)}_{Guid.NewGuid():N}{Path.GetExtension(request.FileName)}");
+                var uniqueName = $"{Path.GetFileNameWithoutExtension(request.FileName)}_{Guid.NewGuid():N}{Path.GetExtension(request.FileName)}";
+                filePath = Path.GetFullPath(Path.Combine(_options.RootPath, folder, uniqueName));
             }
 
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
             await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
             await request.Content.CopyToAsync(fileStream, cancellationToken);
 

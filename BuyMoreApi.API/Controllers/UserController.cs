@@ -51,5 +51,12 @@ namespace BuyMoreApi.API.Controllers
             var response = await _userService.GetProfile(id);
             return Ok(response);
         }
+
+        [HttpPost("upload-profile-picture")]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file, CancellationToken cancellationToken)
+        {
+            var path = await _userService.UploadProfilePicture(file, cancellationToken);
+            return Ok(path);
+        }
     }
 }

@@ -14,5 +14,21 @@ namespace BuyMoreApi.Domain.Entities
         public int Quantity { get; set; }
         public string Category { get; set; } = "General";
         public List<string> ImageUrls { get; set; } = new();
+
+        public bool UpdateQuantity(int quantity, bool add)
+        {
+            if (add)
+            {
+                Quantity += quantity;
+                return true;
+            }
+
+            if(Quantity >= quantity)
+            {
+                Quantity -= quantity;
+                return true;
+            }
+            return false;
+        }
     }
 }

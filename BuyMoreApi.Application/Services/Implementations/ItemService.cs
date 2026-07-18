@@ -1,0 +1,141 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BuyMoreApi.Application.Authentication;
+using BuyMoreApi.Application.Dtos.RequestDtos;
+using BuyMoreApi.Application.Dtos.ResponseDtos;
+using BuyMoreApi.Application.Exceptions;
+using BuyMoreApi.Application.Repositories;
+using BuyMoreApi.Application.Services.Interfaces;
+using BuyMoreApi.Application.Storage;
+using BuyMoreApi.Domain.Entities;
+using Microsoft.Extensions.Logging;
+
+namespace BuyMoreApi.Application.Services.Implementations
+{
+    public class ItemService : IItemService
+    {
+        private readonly IItemRepository _itemRepo;
+        private readonly ICurrentUser _currentUser;
+        private readonly ILogger<ItemService> _logger;
+        private readonly IFileStorage _fileStorage;
+
+        public ItemService(ICurrentUser currentUser, IItemRepository itemRepo, IFileStorage fileStorage, ILogger<ItemService> logger)
+        {
+            _logger = logger;
+            _itemRepo = itemRepo;
+            _currentUser = currentUser;
+            _fileStorage = fileStorage;
+        }
+
+        public async Task<Item> AddAsync(ItemRequest request, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"Adding a new Item {request.Name}.");
+            var loggedInUser = _currentUser.LoggedInUserEmail();
+            var item = new Item
+            {
+                Name = request.Name,
+                Description = request.Description,
+                Category = request.Category,
+                SellingPrice = request.SellingPrice,
+                CostPrice = request.CostPrice,
+                CreatedBy = loggedInUser,
+                Quantity = request.Quantity
+            };
+
+            if (request.Images != null)
+            {
+                foreach(var file in request.Images)
+                {
+                    if(file.Length > 0)
+                    {
+                        await using var stream = file.OpenReadStream();
+
+                        item.ImageUrls.Add(await _fileStorage.SaveAsync(new FileUploadRequest
+                        {
+                            Content = stream,
+                            FileName = file.FileName,
+                            Folder = "Itmes",
+                            ContentType = file.ContentType
+                        }, cancellationToken));
+                    }
+                    
+                }
+            }
+            await _itemRepo.AddAsync(item);
+            return item;
+        }
+
+        public async Task<Item> AddMoreQuantity(Guid id, int quantity)
+        {
+            var item = await _itemRepo.GetByIdAsync(id);
+            if(item == null)
+            {
+                _logger.LogWarning($"Item with id: {id} not found.");
+                throw new NotFoundException($"Item with id: {id} not found.");
+            }
+
+            item.UpdateQuantity(quantity, true);
+            await _itemRepo.Update(item);
+            return item;
+        }
+
+        public async Task<Item?> AdminGet(Guid id)
+        {
+            return await _itemRepo.GetByIdAsync(id);
+        }
+
+        public async Task<List<Item>> AdminGetAll(SearchItemRequest request)
+        {
+            return await _itemRepo.GetAllAsync(request);
+        }
+
+        public async Task<ItemResponse?> GetByIdAsync(Guid id)
+        {
+            var item = await _itemRepo.GetByIdAsync(id);
+            return item == null ? null : new ItemResponse
+            {
+                Name = item.Name,
+                Description = item.Description,
+                Category = item.Category,
+                Quantity = item.Quantity,
+                SellingPrice = item.SellingPrice,
+                ImageUrls = item.ImageUrls
+            };
+        }
+
+        public async Task<List<ItemResponse>> SearchItems(SearchItemRequest request)
+        {
+            var items = await _itemRepo.GetAllAsync(request);
+            return items.Select(item => new ItemResponse
+            {
+                Name = item.Name,
+                Description = item.Description,
+                Category = item.Category,
+                Quantity = item.Quantity,
+                SellingPrice = item.SellingPrice,
+                ImageUrls = item.ImageUrls
+            }).ToList();
+        }
+
+        public async Task<Item> Update(Guid id, ItemRequest request)
+        {
+            var item = await _itemRepo.GetByIdAsync(id);
+            if(item == null)
+            {
+                _logger.LogWarning($"Item with id: {id} not found.");
+                throw new NotFoundException($"Item with id: {id} not found.");
+            }
+            item.Name = request.Name;
+            item.Category = request.Category;
+            item.Description = request.Description;
+            item.SellingPrice = request.SellingPrice;
+            item.CostPrice = request.CostPrice;
+            item.Quantity = request.Quantity;
+
+            await _itemRepo.Update(item);
+            return item;
+        }
+    }
+}

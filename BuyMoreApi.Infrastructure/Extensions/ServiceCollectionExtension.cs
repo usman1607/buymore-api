@@ -45,12 +45,14 @@ namespace BuyMoreApi.Infrastructure.Extensions
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPaymentService, PaystackPaymentService>();
             services.AddScoped<IPaystackWebhookService, PaystackWebhookService>();
+            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<IItemService, ItemService>();
 
             services.AddScoped<LocalFileStorage>();
             services.AddScoped<AwsS3FileStorage>();
             services.AddScoped<AzureBlobFileStorage>();
-            services.AddSingleton<FileStorageFactory>();
-            services.AddScoped<IFileStorage>(sp => sp.GetRequiredService<FileStorageFactory>().Create());
+            services.AddScoped<FileStorageFactory>();
+            services.AddScoped(sp => sp.GetRequiredService<FileStorageFactory>().Create());
 
             return services;
         }

@@ -215,7 +215,8 @@ namespace BuyMoreApi.Application.Services.Implementations
             var path = await _fileStorage.SaveAsync(new FileUploadRequest
             {
                 Content = stream,
-                FileName = file.FileName,
+                FileName = $"{email}_{file.FileName}",
+                Folder = "ProfilePictures",
                 ContentType = file.ContentType
             }, cancellationToken);
 
