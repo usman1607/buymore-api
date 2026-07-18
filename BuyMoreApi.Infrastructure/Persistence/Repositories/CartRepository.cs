@@ -23,7 +23,7 @@ namespace BuyMoreApi.Infrastructure.Persistence.Repositories
             return cart;
         }
 
-        public async Task<Cart?> GetAsync(Guid userId)
+        public async Task<Cart?> GetByUserIdAsync(Guid userId)
         {
             var cart = await _context.Carts.Where(c => c.UserId == userId).FirstOrDefaultAsync();
 
@@ -40,6 +40,11 @@ namespace BuyMoreApi.Infrastructure.Persistence.Repositories
             _context.Carts.Update(cart);
             await _context.SaveChangesAsync();
             return cart;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -88,5 +88,13 @@ namespace BuyMoreApi.API.Controllers
             var response = await _itemService.RemoveItemFromCart(id, itemId, quantity);
             return Ok(response);
         }
+
+        [Authorize(Policy = "CustomerOnly")]
+        [HttpPatch("get-cart")]
+        public async Task<IActionResult> GetCart()
+        {
+            var response = await _itemService.GetCart();
+            return Ok(response);
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace BuyMoreApi.Application.Authentication
     {
         User LoggedInUser();
         string LoggedInUserEmail();
+        Guid LoggedInUserId();
     }
 }

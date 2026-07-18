@@ -47,6 +47,7 @@ namespace BuyMoreApi.Infrastructure.Extensions
             services.AddScoped<IPaystackWebhookService, PaystackWebhookService>();
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IBaseRepository, BaseRepository>();
 
             services.AddScoped<LocalFileStorage>();
             services.AddScoped<AwsS3FileStorage>();

@@ -17,15 +17,19 @@ namespace BuyMoreApi.Application.Services.Implementations
     public class CustomerPaymentService : ICustomerPaymentService
     {
         private readonly ILogger<CustomerPaymentService> _logger;
+        private readonly IBaseRepository _baseRepo;
+        private readonly IItemRepository _itemRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICartRepository _cartRepositoty;
         private readonly IOrderRepository _orderRepository;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IPaymentService _paymentService;
 
-        public CustomerPaymentService(IUserRepository userRepository, ICartRepository cartRepository, IOrderRepository orderRepository, IPaymentRepository paymentRepository, IPaymentService paymentService, ILogger<CustomerPaymentService> logger)
+        public CustomerPaymentService(IUserRepository userRepository, IBaseRepository baseRepo, IItemRepository itemReposity, ICartRepository cartRepository, IOrderRepository orderRepository, IPaymentRepository paymentRepository, IPaymentService paymentService, ILogger<CustomerPaymentService> logger)
         {
             _logger = logger;
+            _baseRepo = baseRepo;
+            _itemRepository = itemReposity;
             _cartRepositoty = cartRepository;
             _userRepository = userRepository;
             _orderRepository = orderRepository;
@@ -35,7 +39,7 @@ namespace BuyMoreApi.Application.Services.Implementations
 
         public async Task<PaystackInitializeResponse> Checkout(CheckoutRequest request, CancellationToken cancellationToken)
         {
-            /*var user = await _userRepository.GetUserById(request.UserId);
+            var user = await _userRepository.GetUserById(request.UserId);
             if(user == null)
             {
                 _logger.LogWarning($"Customer with id: {request.UserId} does not exist.");
@@ -44,7 +48,11 @@ namespace BuyMoreApi.Application.Services.Implementations
 
             var orderReference = Util.GenerateReference("ORD");
             var paymentReference = Util.GenerateReference("PAY");
-            var cart = await _cartRepositoty.GetAsync(request.UserId);
+            var cart = await _cartRepositoty.GetByUserIdAsync(request.UserId);
+            if(cart == null)
+            {
+                throw new NotFoundException("Cart not found.");
+            }
 
             if(cart.Items.Count <= 0)
             {
@@ -52,22 +60,31 @@ namespace BuyMoreApi.Application.Services.Implementations
                 throw new BadRequestException("There is not item in the cart.");
             }
 
-            var amount = cart.Items.Sum(i => i.SellingPrice * i.Quantity);
-            var metadata = new Dictionary<string, object>();
-            foreach( var item in cart.Items)
+            decimal amount = 0m;
+            List<Item> items = new List<Item>();
+            var metadata = new Dictionary<string, string>();
+            foreach (var i in cart.Items)
             {
-                if (!metadata.ContainsKey(item.Name))
+                var item = await _itemRepository.GetByIdAsync(i.Key);
+                if(item != null)
                 {
-                    var value = $"{item.Quantity} x {item.SellingPrice} = {item.Quantity * item.SellingPrice}";
-                    metadata.Add(item.Name, value);
+                    items.Add(item);
+                    amount += item.SellingPrice * i.Value;
+                    if (!metadata.ContainsKey(item.Name))
+                    {
+                        var value = $"{item.Quantity} x {item.SellingPrice} = {item.Quantity * item.SellingPrice}";
+                        metadata.Add(item.Name, value);
+                    }
                 }
             }
+            
+           
 
             var order = new Order
             {
                 UserId = request.UserId,
                 User = user,
-                Items = cart.Items,
+                Items = items,
                 Reference = orderReference,
                 Status = OrderStatus.Pending,
                 TotalAmount = amount,
@@ -91,7 +108,7 @@ namespace BuyMoreApi.Application.Services.Implementations
             order.Payment = payment;
             order.PaymentId = payment.Id;
 
-            await _orderRepository.AddOrder(order);
+            //await _orderRepository.AddOrder(order);
             await _paymentRepository.AddPayment(payment);
 
             var paymentRequest = new PaystackInitializeRequest
@@ -102,9 +119,14 @@ namespace BuyMoreApi.Application.Services.Implementations
                 CallbackUrl = request.CallbackUrl,
                 Metadata = metadata
             };
+            var response = await _paymentService.InitializeTransactionAsync(paymentRequest, cancellationToken);
 
-            return await _paymentService.InitializeTransactionAsync(paymentRequest, cancellationToken);*/
-            throw new NotImplementedException();
+
+            cart.EmptyCart();
+            await _cartRepositoty.Update(cart);
+            await _baseRepo.SaveChangesAsync();
+
+            return response;
         }
 
         public Task<Payment?> GetPaymentByReference(string reference)

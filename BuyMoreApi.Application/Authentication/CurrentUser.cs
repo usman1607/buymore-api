@@ -26,5 +26,11 @@ namespace BuyMoreApi.Application.Authentication
         {
             return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value ?? "";
         }
+
+        public Guid LoggedInUserId()
+        {
+            var id = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            return Guid.Parse(id);
+        }
     }
 }

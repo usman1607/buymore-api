@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BuyMoreApi.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ec269b21b8e477510bac448ff06082cb1095d02b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0281b8301920eaf7520dac737f41f6f56ac1b63e")]
 [assembly: System.Reflection.AssemblyProductAttribute("BuyMoreApi.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BuyMoreApi.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

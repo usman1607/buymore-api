@@ -8,7 +8,7 @@ namespace BuyMoreApi.Application.Repositories
     public interface ICartRepository
     {
         Task<Cart?> GetByIdAsync(Guid id);
-        Task<Cart?> GetAsync(Guid userId);
+        Task<Cart?> GetByUserIdAsync(Guid userId);
         Task<Cart> AddAsync(Cart cart);
         Task<Cart> Update(Cart cart);
     }

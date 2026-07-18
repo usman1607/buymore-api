@@ -16,8 +16,6 @@ namespace BuyMoreApi.Infrastructure.Persistence.Repositories
         public async Task<Payment> AddPayment(Payment payment)
         {
             await _context.Payments.AddAsync(payment);
-            await _context.SaveChangesAsync();
-
             return payment;
         }
 

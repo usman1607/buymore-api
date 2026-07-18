@@ -92,7 +92,7 @@ namespace BuyMoreApi.Application.Services.Implementations
                 throw new NotFoundException("User not found");
             }
             
-            var cart = await _cartRepo.GetAsync(user.Id);
+            var cart = await _cartRepo.GetByUserIdAsync(user.Id);
             if(cart == null)
             {
                 cart = await _cartRepo.AddAsync(new Cart
@@ -145,6 +145,7 @@ namespace BuyMoreApi.Application.Services.Implementations
             var item = await _itemRepo.GetByIdAsync(id);
             return item == null ? null : new ItemResponse
             {
+                Id = item.Id,
                 Name = item.Name,
                 Description = item.Description,
                 Category = item.Category,
@@ -152,6 +153,18 @@ namespace BuyMoreApi.Application.Services.Implementations
                 SellingPrice = item.SellingPrice,
                 ImageUrls = item.ImageUrls
             };
+        }
+
+        public async Task<CartResponse> GetCart()
+        {
+            var userId = _currentUser.LoggedInUserId();
+            var cart = await _cartRepo.GetByUserIdAsync(userId);
+            if(cart == null)
+            {
+                throw new NotFoundException("Cart not found.");
+            }
+                
+            return new CartResponse(cart.Id, cart.Items);
         }
 
         public async Task<CartResponse> RemoveItemFromCart(Guid cartId, Guid itemId, int quantity)
@@ -187,6 +200,7 @@ namespace BuyMoreApi.Application.Services.Implementations
             var items = await _itemRepo.GetAllAsync(request);
             return items.Select(item => new ItemResponse
             {
+                Id = item.Id,
                 Name = item.Name,
                 Description = item.Description,
                 Category = item.Category,

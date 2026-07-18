@@ -12,6 +12,6 @@ namespace BuyMoreApi.Application.Payments.Paystack
         public required string Reference { get; init; }
         public string Currency { get; init; } = "NGN";
         public string? CallbackUrl { get; init; }
-        public IDictionary<string, object> Metadata { get; init; } = new Dictionary<string, object>();
+        public IDictionary<string, string> Metadata { get; init; } = new Dictionary<string, string>();
     }
 }

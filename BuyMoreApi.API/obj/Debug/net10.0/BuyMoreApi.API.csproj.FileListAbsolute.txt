@@ -149,3 +149,4 @@ C:\Users\usman.tijani\Documents\Coh2\BuyMoreApi\BuyMoreApi.API\bin\Debug\net10.0
 C:\Users\usman.tijani\Documents\Coh2\BuyMoreApi\BuyMoreApi.API\bin\Debug\net10.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\usman.tijani\Documents\Coh2\BuyMoreApi\BuyMoreApi.API\bin\Debug\net10.0\System.IO.Hashing.dll
 C:\Users\usman.tijani\Documents\Coh2\BuyMoreApi\BuyMoreApi.API\bin\Debug\net10.0\System.Memory.Data.dll
+C:\Users\usman.tijani\Documents\Coh2\BuyMoreApi\BuyMoreApi.API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "M5y299Ik6V8=",
+  "dgSpecHash": "sxq2cNXqHPA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+  "projectFilePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\usman.tijani\\.nuget\\packages\\awssdk.core\\3.7.300.7\\awssdk.core.3.7.300.7.nupkg.sha512",
     "C:\\Users\\usman.tijani\\.nuget\\packages\\awssdk.s3\\3.7.302\\awssdk.s3.3.7.302.nupkg.sha512",
@@ -63,11 +63,11 @@
     {
       "code": "NU1510",
       "level": "Warning",
-      "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+      "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
-      "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "libraryId": "Microsoft.Extensions.Logging.Abstractions",
       "targetGraphs": [
         "net10.0"
       ]
@@ -75,11 +75,11 @@
     {
       "code": "NU1510",
       "level": "Warning",
-      "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+      "message": "PackageReference Microsoft.Extensions.Configuration.Abstractions will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
-      "libraryId": "Microsoft.Extensions.Logging.Abstractions",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
+      "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
       "targetGraphs": [
         "net10.0"
       ]
@@ -88,9 +88,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "BuyMoreApi.Infrastructure depends on AWSSDK.S3 (>= 3.7.301.2) but AWSSDK.S3 3.7.301.2 was not found. AWSSDK.S3 3.7.302 was resolved instead.",
-      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+      "projectPath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\buymoreapi.api\\BuyMoreApi.API.csproj",
+      "filePath": "C:\\Users\\usman.tijani\\Documents\\Coh2\\BuyMoreApi\\BuyMoreApi.API\\BuyMoreApi.API.csproj",
       "libraryId": "AWSSDK.S3",
       "targetGraphs": [
         "net10.0"

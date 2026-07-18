@@ -1,7 +1,9 @@
 ﻿using System.Text;
 using System.Text.Json;
+using BuyMoreApi.Application.Dtos.RequestDtos;
 using BuyMoreApi.Application.Payments;
 using BuyMoreApi.Application.Payments.Paystack;
+using BuyMoreApi.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,18 +15,20 @@ namespace BuyMoreApi.API.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private readonly ICustomerPaymentService _customerPayment;
         private readonly IPaystackWebhookService _paystackWebhookService;
 
-        public PaymentsController(IPaymentService paymentService, IPaystackWebhookService paystackWebhookService)
+        public PaymentsController(IPaymentService paymentService, ICustomerPaymentService customerPayment, IPaystackWebhookService paystackWebhookService)
         {
             _paymentService = paymentService;
+            _customerPayment = customerPayment;
             _paystackWebhookService = paystackWebhookService;
         }
 
-        [HttpPost("initialize")]
-        public async Task<IActionResult> Initialize([FromBody] PaystackInitializeRequest request, CancellationToken cancellationToken)
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Initialize([FromBody] CheckoutRequest request, CancellationToken cancellationToken)
         {
-            var response = await _paymentService.InitializeTransactionAsync(request, cancellationToken);
+            var response = await _customerPayment.Checkout(request, cancellationToken);
             return Ok(response);
         }
 
