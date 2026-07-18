@@ -9,6 +9,6 @@ namespace BuyMoreApi.Domain.Entities
     {
         public Guid UserId { get; set; }
         public User User { get; set; } = default!;
-        public List<Item> Items { get; set; } = new();
+        public Dictionary<Guid, int> Items { get; set; } = new();
     }
 }

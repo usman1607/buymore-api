@@ -35,7 +35,7 @@ namespace BuyMoreApi.Application.Services.Implementations
 
         public async Task<PaystackInitializeResponse> Checkout(CheckoutRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserById(request.UserId);
+            /*var user = await _userRepository.GetUserById(request.UserId);
             if(user == null)
             {
                 _logger.LogWarning($"Customer with id: {request.UserId} does not exist.");
@@ -103,7 +103,8 @@ namespace BuyMoreApi.Application.Services.Implementations
                 Metadata = metadata
             };
 
-            return await _paymentService.InitializeTransactionAsync(paymentRequest, cancellationToken);
+            return await _paymentService.InitializeTransactionAsync(paymentRequest, cancellationToken);*/
+            throw new NotImplementedException();
         }
 
         public Task<Payment?> GetPaymentByReference(string reference)

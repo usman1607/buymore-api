@@ -1,8 +1,5 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using BuyMoreApi.Application.Payments;
 using BuyMoreApi.Application.Payments.Paystack;
 using Microsoft.AspNetCore.Authorization;

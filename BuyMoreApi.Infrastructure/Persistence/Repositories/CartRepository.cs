@@ -15,10 +15,30 @@ namespace BuyMoreApi.Infrastructure.Persistence.Repositories
         {
             _context = context;
         }
+
+        public async Task<Cart> AddAsync(Cart cart)
+        {
+            await _context.Carts.AddAsync(cart);
+            await _context.SaveChangesAsync();
+            return cart;
+        }
+
         public async Task<Cart?> GetAsync(Guid userId)
         {
-            var cart = await _context.Carts.Where(c => c.UserId == userId).Include(c => c.Items).FirstOrDefaultAsync();
+            var cart = await _context.Carts.Where(c => c.UserId == userId).FirstOrDefaultAsync();
 
+            return cart;
+        }
+
+        public async Task<Cart?> GetByIdAsync(Guid id)
+        {
+            return await _context.Carts.Where(c => c.Id == id && !c.IsDeleted).FirstOrDefaultAsync();
+        }
+
+        public async Task<Cart> Update(Cart cart)
+        {
+            _context.Carts.Update(cart);
+            await _context.SaveChangesAsync();
             return cart;
         }
     }

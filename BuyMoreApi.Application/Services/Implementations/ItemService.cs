@@ -16,15 +16,19 @@ namespace BuyMoreApi.Application.Services.Implementations
 {
     public class ItemService : IItemService
     {
+        private readonly IUserRepository _userRepo;
+        private readonly ICartRepository _cartRepo;
         private readonly IItemRepository _itemRepo;
         private readonly ICurrentUser _currentUser;
         private readonly ILogger<ItemService> _logger;
         private readonly IFileStorage _fileStorage;
 
-        public ItemService(ICurrentUser currentUser, IItemRepository itemRepo, IFileStorage fileStorage, ILogger<ItemService> logger)
+        public ItemService(ICurrentUser currentUser,IUserRepository userRepo, ICartRepository cartRepo, IItemRepository itemRepo, IFileStorage fileStorage, ILogger<ItemService> logger)
         {
             _logger = logger;
+            _userRepo = userRepo;
             _itemRepo = itemRepo;
+            _cartRepo = cartRepo;
             _currentUser = currentUser;
             _fileStorage = fileStorage;
         }
@@ -67,6 +71,51 @@ namespace BuyMoreApi.Application.Services.Implementations
             return item;
         }
 
+        public async Task<CartResponse> AddItemToCart(Guid itemId, int quantity)
+        {
+            var loggedInUser = _currentUser.LoggedInUserEmail();
+            var item = await _itemRepo.GetByIdAsync(itemId);
+
+            if(item == null)
+            {
+                throw new NotFoundException("Item not found.");
+            }
+
+            if(quantity > item.Quantity)
+            {
+                throw new BadRequestException($"No enough item, available quantity: {item.Quantity}.");
+            }
+
+            var user = await _userRepo.GetUserByEmail(loggedInUser);
+            if(user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            
+            var cart = await _cartRepo.GetAsync(user.Id);
+            if(cart == null)
+            {
+                cart = await _cartRepo.AddAsync(new Cart
+                {
+                    UserId = user.Id,
+                    User = user,
+                    CreatedBy = loggedInUser
+                });
+            }
+
+            if (cart.Items.ContainsKey(item.Id))
+            {
+                cart.Items[item.Id] += quantity;
+            }
+            else
+            {
+                cart.Items.Add(item.Id, quantity);
+            }
+
+            await _cartRepo.Update(cart);
+            return new CartResponse(cart.Id, cart.Items);
+        }
+
         public async Task<Item> AddMoreQuantity(Guid id, int quantity)
         {
             var item = await _itemRepo.GetByIdAsync(id);
@@ -103,6 +152,34 @@ namespace BuyMoreApi.Application.Services.Implementations
                 SellingPrice = item.SellingPrice,
                 ImageUrls = item.ImageUrls
             };
+        }
+
+        public async Task<CartResponse> RemoveItemFromCart(Guid cartId, Guid itemId, int quantity)
+        {
+            var loggedInUser = _currentUser.LoggedInUserEmail();
+            var cart = await _cartRepo.GetByIdAsync(cartId);
+            if(cart == null)
+            {
+                throw new NotFoundException("Cart not found");
+            }         
+            
+            if (cart.Items.TryGetValue(itemId, out int value))
+            {
+
+                if(quantity >= value)
+                {
+                    cart.Items.Remove(itemId);
+                }
+                else
+                {
+                    cart.Items[itemId] -= quantity;
+                }
+
+                await _cartRepo.Update(cart);
+                return new CartResponse(cart.Id, cart.Items);
+            }
+
+            throw new NotFoundException($"There is no selected item in your cart.");
         }
 
         public async Task<List<ItemResponse>> SearchItems(SearchItemRequest request)

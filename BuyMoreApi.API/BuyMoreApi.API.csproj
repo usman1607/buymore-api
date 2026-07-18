@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BuyMoreApi.Domain\BuyMoreApi.Domain.csproj" />
     <ProjectReference Include="..\BuyMoreApi.Application\BuyMoreApi.Application.csproj" />
     <ProjectReference Include="..\BuyMoreApi.Infrastructure\BuyMoreApi.Infrastructure.csproj" />
   </ItemGroup>

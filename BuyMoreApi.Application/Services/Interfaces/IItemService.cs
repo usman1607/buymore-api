@@ -12,6 +12,8 @@ namespace BuyMoreApi.Application.Services.Interfaces
         Task<Item> AddMoreQuantity(Guid id, int quantity);
         Task<Item?> AdminGet(Guid id);
         Task<List<Item>> AdminGetAll(SearchItemRequest request);
-        Task<Item> Update(Guid id, ItemRequest request);        
+        Task<Item> Update(Guid id, ItemRequest request);
+        Task<CartResponse> AddItemToCart(Guid itemId, int quantity);     
+        Task<CartResponse> RemoveItemFromCart(Guid cartId, Guid itemId, int quantity);
     }
 }
