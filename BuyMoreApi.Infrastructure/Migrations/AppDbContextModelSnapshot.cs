@@ -164,6 +164,10 @@ namespace BuyMoreApi.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<string>("MetaData")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
                     b.Property<Guid>("PaymentId")
                         .HasColumnType("uuid");
 

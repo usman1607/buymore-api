@@ -16,5 +16,6 @@ namespace BuyMoreApi.Domain.Entities
         public List<Item> Items { get; set; } = new List<Item>();
         public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; set; }
+        public Dictionary<string, string> MetaData { get; set; } = new();
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuyMoreApi.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260713153725_AddImages")]
-    partial class AddImages
+    [Migration("20260719133703_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -166,6 +166,10 @@ namespace BuyMoreApi.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<string>("MetaData")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<Guid>("PaymentId")
                         .HasColumnType("uuid");

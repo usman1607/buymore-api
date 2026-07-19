@@ -72,8 +72,8 @@ namespace BuyMoreApi.Application.Services.Implementations
                     amount += item.SellingPrice * i.Value;
                     if (!metadata.ContainsKey(item.Name))
                     {
-                        var value = $"{item.Quantity} x {item.SellingPrice} = {item.Quantity * item.SellingPrice}";
-                        metadata.Add(item.Name, value);
+                        var details = $"{i.Value} x {item.SellingPrice} = {i.Value * item.SellingPrice}";
+                        metadata.Add(item.Name, details);
                     }
                 }
             }
@@ -88,7 +88,8 @@ namespace BuyMoreApi.Application.Services.Implementations
                 Reference = orderReference,
                 Status = OrderStatus.Pending,
                 TotalAmount = amount,
-                CreatedBy = user.Email
+                CreatedBy = user.Email,
+                MetaData = metadata
             };
 
 

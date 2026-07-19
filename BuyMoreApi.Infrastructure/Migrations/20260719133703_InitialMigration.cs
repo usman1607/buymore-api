@@ -19,6 +19,7 @@ namespace BuyMoreApi.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    profile_picture_url = table.Column<string>(type: "varchar(255)", nullable: true, collation: "case_insensitive"),
                     first_name = table.Column<string>(type: "varchar(100)", nullable: false, collation: "case_insensitive"),
                     last_name = table.Column<string>(type: "varchar(100)", nullable: false, collation: "case_insensitive"),
                     phone_number = table.Column<string>(type: "varchar(20)", nullable: true, collation: "case_insensitive"),
@@ -73,6 +74,7 @@ namespace BuyMoreApi.Infrastructure.Migrations
                     PaymentId = table.Column<Guid>(type: "uuid", nullable: false),
                     total_amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     status = table.Column<string>(type: "varchar(50)", nullable: false),
+                    MetaData = table.Column<string>(type: "jsonb", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<string>(type: "varchar(100)", nullable: false, collation: "case_insensitive"),
                     updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -101,6 +103,7 @@ namespace BuyMoreApi.Infrastructure.Migrations
                     selling_price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
                     category = table.Column<string>(type: "varchar(50)", nullable: false, collation: "case_insensitive"),
+                    image_urls = table.Column<string>(type: "jsonb", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<string>(type: "varchar(100)", nullable: false, collation: "case_insensitive"),

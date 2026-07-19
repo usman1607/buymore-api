@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BuyMoreApi.Domain.Entities;
 using BuyMoreApi.Domain.Enums;
+using BuyMoreApi.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -55,6 +56,9 @@ namespace BuyMoreApi.Infrastructure.Persistence.EntityTypeConfigurations
 
             builder.HasIndex(o => o.Reference)
                 .IsUnique();
+
+            builder.Property(o => o.MetaData)
+                .HasJsonbConversion();
 
             builder.Property(i => i.CreatedDate)
                 .HasColumnName("created_date")
