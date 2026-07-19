@@ -8,6 +8,25 @@ namespace BuyMoreApi.Infrastructure.Persistence
 {
     public static class DatabaseInitializer
     {
+        public async static Task MigrateAsync(IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
+
+            try
+            {
+                logger.LogInformation("Applying database migrations...");
+                await context.Database.MigrateAsync();
+                logger.LogInformation("Database migrations applied successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error applying database migrations");
+                throw;
+            }
+        }
+
         public async static Task SeedUserData(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
@@ -16,10 +35,6 @@ namespace BuyMoreApi.Infrastructure.Persistence
 
             try
             {
-                //logger.LogInformation("Applying database migrations...");
-                //await context.Database.MigrateAsync();
-                //logger.LogInformation("Database migrations applied successfully");
-
                 // Seed data in order
                 if (!context.Users.Any())
                 {

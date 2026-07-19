@@ -1,0 +1,241 @@
+========================================================================
+ DEPLOYING BUYMORE API TO FLY.IO — STEP BY STEP GUIDE
+========================================================================
+
+This guide walks through deploying the BuyMoreApi.API container (built
+from the repo's Dockerfile) to Fly.io, with a managed Fly Postgres
+database.
+
+Files used:
+  - Dockerfile      (already in repo root — builds the .NET 10 app)
+  - fly.toml         (already in repo root — Fly app configuration)
+
+------------------------------------------------------------------------
+0. PREREQUISITES
+------------------------------------------------------------------------
+- A Fly.io account (https://fly.io/app/sign-up) with billing set up
+  (Fly requires a payment method even on free-tier usage).
+- Docker Desktop running locally (Fly can also build remotely, so this
+  is optional but useful for testing the image first).
+- Access to a terminal (PowerShell is fine).
+
+------------------------------------------------------------------------
+1. INSTALL AND LOG IN TO FLYCTL
+------------------------------------------------------------------------
+Windows (PowerShell):
+    powershell -Command "iwr https://fly.io/install.ps1 -useb | iex"
+
+Then restart your terminal and confirm it's on PATH:
+    fly version
+
+Log in (opens a browser):
+    fly auth login
+
+------------------------------------------------------------------------
+2. REVIEW / CUSTOMIZE fly.toml
+------------------------------------------------------------------------
+Open fly.toml and check:
+
+  app = "buymore-api"
+      Must be globally unique across all of Fly. If "buymore-api" is
+      taken, change it here (and everywhere below you see the app name).
+
+  primary_region = "iad"
+      Change to the Fly region closest to your users if needed.
+      List regions: fly platform regions
+
+  internal_port = 8080
+      Must match what the Dockerfile's ASP.NET Core app listens on
+      (it does, via ASPNETCORE_URLS=http://+:8080).
+
+  [[http_service.checks]] path = "/health"
+      Matches the health check endpoint mapped in Program.cs
+      (app.MapHealthChecks("/health")).
+
+  [mounts] source = "buymore_storage"
+      Persistent volume for local file uploads (FileStorage:Local).
+      NOTE: Fly volumes are tied to a single machine. This works fine
+      for a single-instance deployment, but if you later scale to
+      multiple machines, local storage will NOT be shared between
+      them. For multi-instance scaling, switch FileStorage:Provider
+      to "Aws" (S3) or "Azure" (Blob Storage) instead, and remove the
+      [mounts] block.
+
+------------------------------------------------------------------------
+3. CREATE THE FLY APP (without deploying yet)
+------------------------------------------------------------------------
+From the repo root (where fly.toml and Dockerfile live):
+
+    fly apps create buymore-api
+
+(If you changed the app name in fly.toml, use that name here instead.)
+
+------------------------------------------------------------------------
+4. CREATE THE PERSISTENT VOLUME FOR FILE STORAGE
+------------------------------------------------------------------------
+Only needed if you're keeping FileStorage:Provider = Local (the
+default). Create the volume in the SAME region as primary_region:
+
+    fly volumes create buymore_storage --region iad --size 1 -a buymore-api
+
+(--size is in GB; 1 GB is a reasonable starting point. Increase later
+with `fly volumes extend`.)
+
+If you plan to use S3 or Azure Blob storage instead, skip this step
+and remove the [mounts] block from fly.toml before deploying.
+
+------------------------------------------------------------------------
+5. CREATE A FLY POSTGRES DATABASE
+------------------------------------------------------------------------
+Create a managed Postgres cluster:
+
+    fly postgres create --name buymore-api-db --region iad \
+        --vm-size shared-cpu-1x --volume-size 1
+
+This prints out connection details and a superuser password — save
+them somewhere safe, you'll need them in the next step.
+
+Attach it to the API app (this creates a dedicated database + user for
+the app and sets a DATABASE_URL secret automatically):
+
+    fly postgres attach buymore-api-db -a buymore-api
+
+IMPORTANT: The app's code expects a Npgsql-style connection string
+under the config key ConnectionStrings:MyConnectionString
+(e.g. "Host=...;Port=5432;Database=...;Username=...;Password=..."),
+not the DATABASE_URL format Fly sets automatically. After attaching,
+run:
+
+    fly ssh console -a buymore-api-db -C "cat /data/passwd"
+
+or simply reuse the output printed by `fly postgres attach` /
+`fly postgres create` (hostname, database name, username, password),
+then set the properly formatted secret on the API app:
+
+    fly secrets set -a buymore-api `
+      ConnectionStrings__MyConnectionString="Host=buymore-api-db.flycast;Port=5432;Database=buymore_api;Username=buymore_api;Password=<password-from-above>"
+
+(Fly Postgres apps are reachable from other apps in the same
+organization via "<pg-app-name>.flycast" on the private network — no
+public exposure needed.)
+
+------------------------------------------------------------------------
+6. SET THE REMAINING SECRETS
+------------------------------------------------------------------------
+Never put secrets in fly.toml — use `fly secrets set` instead, which
+stores them encrypted and injects them as environment variables.
+
+    fly secrets set -a buymore-api `
+      JwtSettings__SecretKey="<a-long-random-string>" `
+      JwtSettings__Issuer="BuyMoreApi" `
+      JwtSettings__Audience="Audience" `
+      JwtSettings__ExpirationMinutes="60" `
+      Paystack__SecretKey="<your-paystack-secret-key>" `
+      Paystack__PublicKey="<your-paystack-public-key>"
+
+If you're using S3 or Azure Blob storage instead of local disk, also
+set:
+
+    fly secrets set -a buymore-api `
+      FileStorage__Provider="Aws" `
+      FileStorage__Aws__AccessKey="<key>" `
+      FileStorage__Aws__SecretKey="<secret>" `
+      FileStorage__Aws__Region="us-east-1" `
+      FileStorage__Aws__BucketName="<bucket-name>"
+
+Generate a strong JWT secret, for example:
+    powershell -Command "[Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Maximum 256 }))"
+
+------------------------------------------------------------------------
+7. DEPLOY
+------------------------------------------------------------------------
+From the repo root:
+
+    fly deploy
+
+This builds the Docker image (either locally via your Docker daemon,
+or remotely on Fly's builders if Docker isn't running locally) and
+rolls it out.
+
+Watch the deploy:
+    fly logs -a buymore-api
+
+------------------------------------------------------------------------
+8. DATABASE MIGRATIONS
+------------------------------------------------------------------------
+The app now applies pending EF Core migrations automatically on every
+startup (see DatabaseInitializer.MigrateAsync, called unconditionally
+in Program.cs before the app starts serving requests). No manual step
+is required — just make sure the ConnectionStrings__MyConnectionString
+secret from step 5 is correct before deploying, since a bad connection
+string will cause the app to fail on startup instead of at first
+request.
+
+If you ever need to apply migrations manually (e.g. to inspect the
+database before deploying new code), you can still tunnel in:
+
+    fly proxy 5432 -a buymore-api-db
+
+then, in another terminal (repo root, BuyMoreApi.API folder):
+
+    cd BuyMoreApi.API
+    dotnet ef database update --connection "Host=localhost;Port=5432;Database=buymore_api;Username=buymore_api;Password=<password-from-step-5>"
+
+------------------------------------------------------------------------
+9. VERIFY THE DEPLOYMENT
+------------------------------------------------------------------------
+    fly status -a buymore-api
+    fly open -a buymore-api          (opens https://buymore-api.fly.dev)
+
+Check the health endpoint:
+    curl https://buymore-api.fly.dev/health
+
+Since ASPNETCORE_ENVIRONMENT is set to "Production" in fly.toml,
+Swagger UI is disabled (it's only enabled in Development in
+Program.cs). If you want Swagger available on Fly for testing, change
+[env] ASPNETCORE_ENVIRONMENT to "Development" in fly.toml — note this
+will also re-enable the startup admin user seed
+(admin@yopmail.com / Admin@123), so only do this on a throwaway/staging
+app, never on a real production deployment.
+
+------------------------------------------------------------------------
+10. ONGOING OPERATIONS
+------------------------------------------------------------------------
+Redeploy after code changes:
+    fly deploy
+
+Tail logs:
+    fly logs -a buymore-api
+
+SSH into a running machine:
+    fly ssh console -a buymore-api
+
+Scale machine count / size:
+    fly scale count 2 -a buymore-api
+    fly scale vm shared-cpu-2x -a buymore-api
+
+Update a secret:
+    fly secrets set -a buymore-api SOME_KEY="new-value"
+    (this triggers a new deploy automatically)
+
+Add a custom domain + TLS cert:
+    fly certs add yourdomain.com -a buymore-api
+    (then add the DNS records Fly gives you)
+
+------------------------------------------------------------------------
+TROUBLESHOOTING
+------------------------------------------------------------------------
+- "Health check failing" -> check `fly logs`; most commonly caused by
+  a bad ConnectionStrings__MyConnectionString secret. Since migrations
+  now run automatically on startup (step 8), a wrong connection string
+  or unreachable database will show up as a startup crash in the logs
+  rather than a runtime error.
+- "App can't reach Postgres" -> confirm both apps are in the same Fly
+  organization and the hostname ends in ".flycast" (or use
+  "<pg-app-name>.internal" as an alternative internal DNS name).
+- "Uploaded files disappear after redeploy" -> the [mounts] volume is
+  tied to a specific machine; if you scaled to multiple machines or
+  Fly moved you to a new machine, local storage isn't shared. Switch
+  to S3/Azure Blob storage for anything beyond a single-instance
+  deployment.
+========================================================================

@@ -98,6 +98,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Apply pending EF Core migrations on startup, in every environment.
+await DatabaseInitializer.MigrateAsync(app.Services);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

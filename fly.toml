@@ -1,0 +1,37 @@
+# fly.toml app configuration file for BuyMore API
+# See https://fly.io/docs/reference/configuration/ for details
+
+app = "buymore-api"
+primary_region = "iad"
+
+[build]
+
+[env]
+  ASPNETCORE_ENVIRONMENT = "Production"
+  ASPNETCORE_URLS = "http://+:8080"
+  FileStorage__Provider = "Local"
+  FileStorage__Local__RootPath = "/app/Storage"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "15s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+[mounts]
+  source = "buymore_storage"
+  destination = "/app/Storage"
