@@ -36,6 +36,12 @@ namespace BuyMoreApi.Application.Services.Implementations
         public async Task<Item> AddAsync(ItemRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Adding a new Item {request.Name}.");
+            if(request.CostPrice < 0 || request.SellingPrice < 0)
+            {
+                _logger.LogWarning("Cost price or selling price cannot be less than zero.");
+                throw new BadRequestException("Cost price or selling price cannot be less than zero.");
+            }
+
             var loggedInUser = _currentUser.LoggedInUserEmail();
             var item = new Item
             {
@@ -74,6 +80,12 @@ namespace BuyMoreApi.Application.Services.Implementations
         public async Task<CartResponse> AddItemToCart(Guid itemId, int quantity)
         {
             var loggedInUser = _currentUser.LoggedInUserEmail();
+            var user = await _userRepo.GetUserByEmail(loggedInUser);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
             var item = await _itemRepo.GetByIdAsync(itemId);
 
             if(item == null)
@@ -84,12 +96,6 @@ namespace BuyMoreApi.Application.Services.Implementations
             if(quantity > item.Quantity)
             {
                 throw new BadRequestException($"No enough item, available quantity: {item.Quantity}.");
-            }
-
-            var user = await _userRepo.GetUserByEmail(loggedInUser);
-            if(user == null)
-            {
-                throw new NotFoundException("User not found");
             }
             
             var cart = await _cartRepo.GetByUserIdAsync(user.Id);
@@ -119,6 +125,11 @@ namespace BuyMoreApi.Application.Services.Implementations
         public async Task<Item> AddMoreQuantity(Guid id, int quantity)
         {
             var item = await _itemRepo.GetByIdAsync(id);
+            if(quantity <= 0)
+            {
+                throw new BadRequestException("Invalid quantity.");
+            }
+
             if(item == null)
             {
                 _logger.LogWarning($"Item with id: {id} not found.");

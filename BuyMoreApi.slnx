@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/UnitTest/UnitTest.csproj" Id="3351ed7a-79b4-4b3a-b33b-236cbf033c72" />
+  </Folder>
   <Project Path="BuyMoreApi.API/BuyMoreApi.API.csproj" />
   <Project Path="BuyMoreApi.Application/BuyMoreApi.Application.csproj" />
   <Project Path="BuyMoreApi.Domain/BuyMoreApi.Domain.csproj" />
