@@ -69,8 +69,7 @@ namespace BuyMoreApi.Application.Services.Implementations
                             Folder = "Itmes",
                             ContentType = file.ContentType
                         }, cancellationToken));
-                    }
-                    
+                    }                    
                 }
             }
 
