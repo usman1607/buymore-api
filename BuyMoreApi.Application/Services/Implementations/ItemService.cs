@@ -61,7 +61,6 @@ namespace BuyMoreApi.Application.Services.Implementations
                     if(file.Length > 0)
                     {
                         await using var stream = file.OpenReadStream();
-
                         item.ImageUrls.Add(await _fileStorage.SaveAsync(new FileUploadRequest
                         {
                             Content = stream,
