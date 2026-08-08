@@ -76,8 +76,10 @@ namespace BuyMoreApi.Application.Services.Implementations
                         }
                     }
                     
+                    }                    
                 }
             }
+
             await _itemRepo.AddAsync(item);
             return item;
         }
