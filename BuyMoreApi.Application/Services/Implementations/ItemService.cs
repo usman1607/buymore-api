@@ -68,6 +68,12 @@ namespace BuyMoreApi.Application.Services.Implementations
                             Folder = "Itmes",
                             ContentType = file.ContentType
                         }, cancellationToken));
+
+                        if (file.Length > 1000 * 1024 * 1024)
+                        {
+                            _logger.LogWarning($"File {file.FileName} exceeds the maximum allowed size of 1GB.");
+                            throw new BadRequestException($"File {file.FileName} exceeds the maximum allowed size of 5MB.");
+                        }
                     }
                     
                 }
